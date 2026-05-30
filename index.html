@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amal's Book of Stories</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #fdf6ec;
+    --warm-white: #fffdf8;
+    --gold: #c9973a;
+    --gold-light: #e8c47a;
+    --terracotta: #b85c38;
+    --sage: #7a9e7e;
+    --ink: #2c2016;
+    --ink-soft: #5a4a3a;
+    --ink-faint: #9a8a7a;
+    --border: #e8d8c0;
+    --shadow: rgba(44,32,22,0.10);
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Lora', Georgia, serif;
+    --base-size: 18px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: var(--base-size);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(201,151,58,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 90%, rgba(184,92,56,0.06) 0%, transparent 50%);
+  }
+
+  /* ── COVER ── */
+  #cover {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 100vh; text-align: center;
+    padding: 2rem; animation: fadeIn 1.2s ease;
+  }
+  .cover-ornament { font-size: 2.8rem; margin-bottom: 1rem; opacity: 0.7; }
+  .cover-title { font-family: var(--font-display); font-size: clamp(2.4rem,7vw,4rem); font-weight: 600; color: var(--ink); line-height: 1.2; margin-bottom: 0.4rem; }
+  .cover-subtitle { font-family: var(--font-display); font-style: italic; font-size: clamp(1.1rem,3vw,1.5rem); color: var(--gold); margin-bottom: 2.5rem; }
+  .cover-rule { width: 80px; height: 2px; background: linear-gradient(90deg,transparent,var(--gold),transparent); margin: 0 auto 2rem; }
+  .cover-text { font-size: 1.05rem; color: var(--ink-soft); line-height: 1.8; max-width: 460px; margin-bottom: 2.5rem; }
+  .btn-primary { background: var(--gold); color: white; border: none; padding: 1rem 2.5rem; font-family: var(--font-body); font-size: 1.1rem; border-radius: 40px; cursor: pointer; box-shadow: 0 4px 20px rgba(201,151,58,0.35); transition: all 0.2s ease; letter-spacing: 0.02em; }
+  .btn-primary:hover { background: #b8862e; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  /* ── APP SHELL ── */
+  #app { display: none; min-height: 100vh; }
+
+  header { background: var(--warm-white); border-bottom: 1px solid var(--border); padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px var(--shadow); }
+  .header-left .header-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; color: var(--ink); }
+  .header-left .header-sub { font-family: var(--font-display); font-style: italic; font-size: 0.85rem; color: var(--gold); }
+  .header-right { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; justify-content: flex-end; }
+
+  /* ── DRIVE STATUS ── */
+  .drive-btn { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.9rem; border-radius: 20px; font-family: var(--font-body); font-size: 0.8rem; cursor: pointer; border: 1px solid var(--border); background: none; color: var(--ink-soft); transition: all 0.2s; white-space: nowrap; }
+  .drive-btn:hover { border-color: var(--gold-light); color: var(--gold); }
+  .drive-btn.connected { border-color: var(--sage); color: var(--sage); }
+  .drive-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+  /* ── FONT CONTROLS ── */
+  .font-controls { display: flex; align-items: center; gap: 0.4rem; }
+  .font-btn { background: none; border: 1px solid var(--border); color: var(--ink-soft); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .font-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .font-label { font-size: 0.75rem; color: var(--ink-faint); }
+
+  /* ── NAV ── */
+  nav { display: flex; background: var(--warm-white); border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+  nav::-webkit-scrollbar { display: none; }
+  .tab { padding: 0.85rem 1.4rem; font-family: var(--font-body); font-size: 0.95rem; color: var(--ink-faint); cursor: pointer; border: none; background: none; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s; }
+  .tab:hover { color: var(--ink); }
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); font-weight: 500; }
+
+  /* ── MAIN ── */
+  main { max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .section { display: none; animation: fadeIn 0.4s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  .section-header { margin-bottom: 2rem; }
+  .section-title { font-family: var(--font-display); font-size: clamp(1.6rem,4vw,2.2rem); font-weight: 600; color: var(--ink); margin-bottom: 0.3rem; }
+  .section-hint { font-style: italic; color: var(--ink-soft); font-size: 0.95rem; line-height: 1.6; }
+
+  /* ── PROMPTS ── */
+  .prompts-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(230px,1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .prompt-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 0.7rem; }
+  .prompt-card:hover { border-color: var(--gold-light); box-shadow: 0 4px 16px var(--shadow); transform: translateY(-2px); }
+  .prompt-emoji { font-size: 1.5rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .prompt-text { font-size: 0.92rem; color: var(--ink-soft); line-height: 1.5; }
+
+  /* ── FORM ELEMENTS ── */
+  .form-label { display: block; font-size: 0.88rem; font-weight: 500; color: var(--ink-soft); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .form-input { width: 100%; padding: 0.8rem 1rem; font-family: var(--font-body); font-size: 1rem; color: var(--ink); background: var(--cream); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1.2rem; transition: border-color 0.2s; outline: none; }
+  .form-input:focus { border-color: var(--gold); }
+
+  /* ── TEXTAREA + MIC ── */
+  .textarea-wrap { position: relative; margin-bottom: 1.2rem; }
+  .form-textarea { width: 100%; padding: 1rem 3.5rem 1rem 1rem; font-family: var(--font-body); font-size: 1.05rem; color: var(--ink); background: var(--cream); border: 1px solid var(--border); border-radius: 8px; min-height: 220px; resize: vertical; line-height: 1.8; outline: none; transition: border-color 0.2s; }
+  .form-textarea:focus { border-color: var(--gold); }
+
+  .mic-btn { position: absolute; top: 0.8rem; right: 0.8rem; width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: all 0.2s; background: var(--warm-white); border: 1px solid var(--border); color: var(--ink-soft); }
+  .mic-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .mic-btn.listening { background: #fee; border-color: #e55; color: #e55; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+
+  .mic-status { font-size: 0.82rem; color: var(--ink-faint); font-style: italic; margin-bottom: 0.8rem; min-height: 1.2em; }
+  .mic-status.active { color: #e55; }
+
+  .language-note { background: rgba(201,151,58,0.08); border-left: 3px solid var(--gold-light); padding: 0.7rem 1rem; border-radius: 0 8px 8px 0; font-size: 0.88rem; color: var(--ink-soft); font-style: italic; margin-bottom: 1.2rem; }
+
+  .form-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+  .btn-save { background: var(--gold); color: white; border: none; padding: 0.8rem 2rem; font-family: var(--font-body); font-size: 1rem; border-radius: 40px; cursor: pointer; transition: all 0.2s; }
+  .btn-save:hover { background: #b8862e; }
+  .btn-cancel { background: none; border: 1px solid var(--border); color: var(--ink-soft); padding: 0.8rem 1.5rem; font-family: var(--font-body); font-size: 1rem; border-radius: 40px; cursor: pointer; transition: all 0.2s; }
+  .btn-cancel:hover { border-color: var(--ink-soft); }
+  .btn-new { display: inline-flex; align-items: center; gap: 0.5rem; background: none; border: 1px solid var(--gold); color: var(--gold); padding: 0.7rem 1.4rem; font-family: var(--font-body); font-size: 0.95rem; border-radius: 40px; cursor: pointer; transition: all 0.2s; margin-bottom: 1.5rem; }
+  .btn-new:hover { background: rgba(201,151,58,0.08); }
+
+  /* ── STORY CARDS ── */
+  .stories-list { display: flex; flex-direction: column; gap: 1.2rem; }
+  .story-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; box-shadow: 0 1px 8px var(--shadow); transition: box-shadow 0.2s; }
+  .story-card:hover { box-shadow: 0 4px 20px var(--shadow); }
+  .story-card-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
+  .story-tag { background: rgba(201,151,58,0.12); color: var(--gold); padding: 0.25rem 0.7rem; border-radius: 20px; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.04em; }
+  .story-date { font-size: 0.78rem; color: var(--ink-faint); }
+  .story-title-card { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; color: var(--ink); margin-bottom: 0.6rem; }
+  .story-preview { color: var(--ink-soft); font-size: 0.95rem; line-height: 1.7; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .story-actions { margin-top: 1rem; display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .btn-sm { padding: 0.4rem 1rem; font-family: var(--font-body); font-size: 0.85rem; border-radius: 20px; cursor: pointer; transition: all 0.2s; border: 1px solid var(--border); background: none; color: var(--ink-soft); }
+  .btn-sm:hover { border-color: var(--gold-light); color: var(--gold); }
+  .btn-sm.danger:hover { border-color: var(--terracotta); color: var(--terracotta); }
+
+  /* ── EMPTY ── */
+  .empty-state { text-align: center; padding: 3rem 2rem; color: var(--ink-faint); }
+  .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .empty-state-text { font-family: var(--font-display); font-style: italic; font-size: 1.1rem; }
+
+  /* ── READER ── */
+  #reader-overlay { display: none; position: fixed; inset: 0; background: var(--cream); z-index: 200; overflow-y: auto; padding: 2rem; animation: fadeIn 0.3s ease; }
+  .reader-inner { max-width: 680px; margin: 0 auto; }
+  .reader-back { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--gold); background: none; border: none; font-family: var(--font-body); font-size: 0.95rem; cursor: pointer; margin-bottom: 2rem; padding: 0; }
+  .reader-back:hover { text-decoration: underline; }
+  .reader-tag { margin-bottom: 0.5rem; }
+  .reader-title { font-family: var(--font-display); font-size: clamp(1.8rem,5vw,2.6rem); font-weight: 600; line-height: 1.25; margin-bottom: 0.5rem; }
+  .reader-date { color: var(--ink-faint); font-size: 0.88rem; margin-bottom: 1.5rem; }
+  .reader-rule { border: none; border-top: 1px solid var(--border); margin-bottom: 2rem; }
+  .reader-body { font-size: 1.15rem; line-height: 2; color: var(--ink); white-space: pre-wrap; }
+  .reader-share-row { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); display: flex; gap: 0.8rem; flex-wrap: wrap; }
+
+  /* ── HOME ── */
+  .home-greeting { font-family: var(--font-display); font-size: clamp(1.8rem,5vw,2.5rem); font-weight: 600; margin-bottom: 0.4rem; color: var(--ink); }
+  .home-sub { font-family: var(--font-display); font-style: italic; font-size: 1.05rem; color: var(--gold); margin-bottom: 2rem; }
+  .stats-row { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+  .stat-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; flex: 1; min-width: 120px; text-align: center; }
+  .stat-num { font-family: var(--font-display); font-size: 2rem; font-weight: 600; color: var(--gold); display: block; }
+  .stat-label { font-size: 0.82rem; color: var(--ink-faint); margin-top: 0.2rem; }
+  .home-recent-title { font-family: var(--font-display); font-size: 1.2rem; color: var(--ink); margin-bottom: 1rem; }
+
+  /* ── RECIPE ── */
+  .recipe-intro { background: rgba(122,158,126,0.08); border-left: 3px solid var(--sage); padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; font-style: italic; color: var(--ink-soft); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.6; }
+  .recipe-card .story-tag { background: rgba(122,158,126,0.12); color: var(--sage); }
+
+  /* ── MODALS ── */
+  #modal-overlay { display: none; position: fixed; inset: 0; background: rgba(44,32,22,0.5); z-index: 300; align-items: center; justify-content: center; padding: 1.5rem; }
+  #modal-overlay.open { display: flex; }
+  .modal { background: var(--warm-white); border-radius: 16px; padding: 2rem; max-width: 540px; width: 100%; box-shadow: 0 20px 60px rgba(44,32,22,0.2); animation: fadeIn 0.3s ease; max-height: 90vh; overflow-y: auto; }
+  .modal h2 { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 0.8rem; }
+  .modal p { color: var(--ink-soft); line-height: 1.6; margin-bottom: 1.5rem; }
+  .modal-actions { display: flex; gap: 0.8rem; justify-content: flex-end; flex-wrap: wrap; }
+  .btn-danger { background: var(--terracotta); color: white; border: none; padding: 0.7rem 1.5rem; font-family: var(--font-body); font-size: 0.95rem; border-radius: 40px; cursor: pointer; }
+
+  /* ── TOAST ── */
+  #toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: white; padding: 0.7rem 1.5rem; border-radius: 30px; font-size: 0.9rem; opacity: 0; transition: all 0.3s; z-index: 500; pointer-events: none; white-space: nowrap; }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── PRINT ── */
+  @media print {
+    #cover, header, nav, .prompts-grid, .btn-new, .story-actions, .reader-share-row, #toast { display: none !important; }
+    body { background: white; font-size: 12pt; }
+    .print-book { display: block !important; }
+    .print-chapter { page-break-before: always; }
+    .print-story { margin-bottom: 2rem; border-bottom: 1px solid #ddd; padding-bottom: 2rem; }
+    .print-title { font-family: Georgia, serif; font-size: 18pt; margin-bottom: 0.3rem; }
+    .print-date { font-size: 9pt; color: #888; margin-bottom: 1rem; }
+    .print-body { font-size: 11pt; line-height: 1.9; white-space: pre-wrap; }
+  }
+
+  @media (max-width: 600px) {
+    main { padding: 1.5rem 1rem 4rem; }
+    .prompts-grid { grid-template-columns: 1fr; }
+    .modal { padding: 1.2rem; }
+    .header-right { gap: 0.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div id="cover">
+  <div class="cover-ornament">✦</div>
+  <h1 class="cover-title">Amal's Book<br>of Stories</h1>
+  <p class="cover-subtitle">A lifetime of memories, told in her own words</p>
+  <div class="cover-rule"></div>
+  <p class="cover-text">
+    This is your space, Amal — for the stories only you can tell. Write in whatever language feels right. Take your time. There are no wrong answers here.
+  </p>
+  <button class="btn-primary" onclick="enterApp()">Begin ✦</button>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <div class="header-left">
+      <div class="header-title">Amal's Book of Stories</div>
+      <div class="header-sub">Your memories, your words</div>
+    </div>
+    <div class="header-right">
+      <button class="drive-btn" id="drive-btn" onclick="handleDriveClick()" title="Back up to Google Drive">
+        <span class="drive-dot"></span>
+        <span id="drive-label">Back up to Drive</span>
+      </button>
+      <div class="font-controls">
+        <span class="font-label">Text</span>
+        <button class="font-btn" onclick="adjustFont(-1)">A−</button>
+        <button class="font-btn" onclick="adjustFont(1)">A+</button>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <button class="tab active" onclick="switchTab('home', this)">🏠 Home</button>
+    <button class="tab" onclick="switchTab('childhood', this)">🌿 Childhood</button>
+    <button class="tab" onclick="switchTab('family', this)">👨‍👩‍👧 Family</button>
+    <button class="tab" onclick="switchTab('places', this)">🗺️ Places</button>
+    <button class="tab" onclick="switchTab('traditions', this)">🪔 Traditions</button>
+    <button class="tab" onclick="switchTab('recipes', this)">🫕 Recipes</button>
+    <button class="tab" onclick="switchTab('anything', this)">💬 Anything Else</button>
+  </nav>
+
+  <main>
+
+    <!-- HOME -->
+    <section id="tab-home" class="section active">
+      <div class="home-greeting">Welcome back, Amal. ✦</div>
+      <div class="home-sub">What story is ready to be told today?</div>
+      <div class="stats-row">
+        <div class="stat-box"><span class="stat-num" id="stat-stories">0</span><div class="stat-label">Stories written</div></div>
+        <div class="stat-box"><span class="stat-num" id="stat-recipes">0</span><div class="stat-label">Recipes saved</div></div>
+        <div class="stat-box"><span class="stat-num" id="stat-chapters">0</span><div class="stat-label">Chapters touched</div></div>
+      </div>
+      <div style="display:flex;gap:0.8rem;margin-bottom:2rem;flex-wrap:wrap;">
+        <button class="btn-new" style="margin-bottom:0;" onclick="printBook()">🖨️ Print my book</button>
+      </div>
+      <div class="home-recent-title">Recently added</div>
+      <div id="home-recent"></div>
+    </section>
+
+    <!-- CHILDHOOD -->
+    <section id="tab-childhood" class="section">
+      <div class="section-header">
+        <div class="section-title">🌿 Childhood</div>
+        <div class="section-hint">The places you grew up, the people who shaped you, the moments that stayed with you longest.</div>
+      </div>
+      <div id="prompts-childhood" class="prompts-grid"></div>
+      <button class="btn-new" onclick="openForm('childhood')">+ Add a memory</button>
+      <div id="stories-childhood" class="stories-list"></div>
+    </section>
+
+    <!-- FAMILY -->
+    <section id="tab-family" class="section">
+      <div class="section-header">
+        <div class="section-title">👨‍👩‍👧 Family</div>
+        <div class="section-hint">The people who made you who you are — parents, grandparents, siblings, cousins, neighbors who felt like family.</div>
+      </div>
+      <div id="prompts-family" class="prompts-grid"></div>
+      <button class="btn-new" onclick="openForm('family')">+ Add a memory</button>
+      <div id="stories-family" class="stories-list"></div>
+    </section>
+
+    <!-- PLACES -->
+    <section id="tab-places" class="section">
+      <div class="section-header">
+        <div class="section-title">🗺️ Places</div>
+        <div class="section-hint">Every home you lived in, every city that changed you, every place that still lives in your heart.</div>
+      </div>
+      <div id="prompts-places" class="prompts-grid"></div>
+      <button class="btn-new" onclick="openForm('places')">+ Add a memory</button>
+      <div id="stories-places" class="stories-list"></div>
+    </section>
+
+    <!-- TRADITIONS -->
+    <section id="tab-traditions" class="section">
+      <div class="section-header">
+        <div class="section-title">🪔 Traditions & Celebrations</div>
+        <div class="section-hint">Eid mornings, weddings, holidays, the rituals your family kept that made ordinary days feel sacred.</div>
+      </div>
+      <div id="prompts-traditions" class="prompts-grid"></div>
+      <button class="btn-new" onclick="openForm('traditions')">+ Add a memory</button>
+      <div id="stories-traditions" class="stories-list"></div>
+    </section>
+
+    <!-- RECIPES -->
+    <section id="tab-recipes" class="section">
+      <div class="section-header">
+        <div class="section-title">🫕 Recipes & Food Memories</div>
+        <div class="section-hint">No measurements needed, Amal. Just the story of the dish — how it smelled, who taught you, when you made it, what it means.</div>
+      </div>
+      <div class="recipe-intro">Write your recipes the way you know them — a handful of this, cook until it smells right, the way your mother showed you. The story behind the dish is just as important as the dish itself.</div>
+      <div id="prompts-recipes" class="prompts-grid"></div>
+      <button class="btn-new" onclick="openForm('recipes')">+ Add a recipe</button>
+      <div id="stories-recipes" class="stories-list"></div>
+    </section>
+
+    <!-- ANYTHING -->
+    <section id="tab-anything" class="section">
+      <div class="section-header">
+        <div class="section-title">💬 Anything Else</div>
+        <div class="section-hint">Dreams you had, lessons you learned, things you want your grandchildren to know. If it doesn't fit anywhere else, it belongs here.</div>
+      </div>
+      <div id="prompts-anything" class="prompts-grid"></div>
+      <button class="btn-new" onclick="openForm('anything')">+ Write something</button>
+      <div id="stories-anything" class="stories-list"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- READER OVERLAY -->
+<div id="reader-overlay">
+  <div class="reader-inner">
+    <button class="reader-back" onclick="closeReader()">← Back to stories</button>
+    <div class="reader-tag"><span class="story-tag" id="reader-tag-label"></span></div>
+    <h1 class="reader-title" id="reader-title"></h1>
+    <div class="reader-date" id="reader-date"></div>
+    <hr class="reader-rule">
+    <div class="reader-body" id="reader-body"></div>
+    <div class="reader-share-row">
+      <button class="btn-new" style="margin-bottom:0;" onclick="shareToFacebook()">📋 Copy for Facebook</button>
+    </div>
+  </div>
+</div>
+
+<!-- WRITE MODAL -->
+<div id="modal-overlay">
+  <div class="modal" id="write-modal">
+    <h2 id="modal-title">Add a Memory</h2>
+    <p id="modal-desc">Write as much or as little as you like. You can always come back and add more.</p>
+
+    <label class="form-label" for="entry-title">Give it a title</label>
+    <input class="form-input" type="text" id="entry-title" placeholder="e.g. The summer I learned to bake bread">
+
+    <label class="form-label">Tell the story</label>
+    <div class="language-note">✦ Write in English, Arabic, French — or all three. Whatever comes naturally.</div>
+    <div class="mic-status" id="mic-status"></div>
+    <div class="textarea-wrap">
+      <textarea class="form-textarea" id="entry-body" placeholder="Start wherever feels right…"></textarea>
+      <button class="mic-btn" id="mic-btn" onclick="toggleMic()" title="Speak your story">🎤</button>
+    </div>
+
+    <input type="hidden" id="entry-category">
+    <input type="hidden" id="entry-id">
+
+    <div class="form-actions">
+      <button class="btn-save" onclick="saveEntry()">Save this memory ✦</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div id="delete-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(44,32,22,0.5);z-index:400;align-items:center;justify-content:center;padding:1.5rem;">
+  <div class="modal">
+    <h2>Delete this entry?</h2>
+    <p>This can't be undone. Are you sure you want to remove this memory?</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeDeleteModal()">Keep it</button>
+      <button class="btn-danger" onclick="confirmDelete()">Yes, delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- PRINT BOOK (hidden, shown at print time) -->
+<div id="print-book" style="display:none;"></div>
+
+<!-- GOOGLE API -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────
+const CLIENT_ID = '800155776650-jpnr85qn3gug5ldfs2ifkq1urh4nts9f.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+const STORAGE_KEY = 'amal_memoir_v1';
+const DRIVE_FILE_KEY = 'amal_drive_file_id';
+
+// ── STATE ─────────────────────────────────────────────────
+let entries = [];
+let deleteTargetId = null;
+let fontScale = 0;
+let driveToken = null;
+let driveFileId = localStorage.getItem(DRIVE_FILE_KEY) || null;
+let recognition = null;
+let isListening = false;
+let currentReaderId = null;
+
+// ── PROMPTS ───────────────────────────────────────────────
+const PROMPTS = {
+  childhood: [
+    { emoji: '🏠', text: 'What was your childhood home like? What did it smell like, look like, feel like?' },
+    { emoji: '👧', text: 'What games did you play as a child? Who did you play with?' },
+    { emoji: '📚', text: 'Tell me about school — a teacher you loved, a day that stands out.' },
+    { emoji: '🌙', text: 'What were summers like when you were young?' },
+    { emoji: '🎈', text: 'What was your favorite thing about being a child?' },
+    { emoji: '😢', text: 'Was there something hard about growing up that shaped who you became?' },
+  ],
+  family: [
+    { emoji: '👵', text: 'Tell me about your grandmother — what do you remember most?' },
+    { emoji: '👨', text: 'What was your father like? A story that shows who he was.' },
+    { emoji: '❤️', text: 'How did you meet your husband? What was that time like?' },
+    { emoji: '🤝', text: 'A moment with a sibling you\'ll never forget.' },
+    { emoji: '🏡', text: 'Describe a typical evening in your family home when you were growing up.' },
+    { emoji: '💬', text: 'What is something a family member used to say that you still think about?' },
+  ],
+  places: [
+    { emoji: '🌍', text: 'The city or town where you grew up — describe it as it was then.' },
+    { emoji: '✈️', text: 'Tell me about a move or journey that changed your life.' },
+    { emoji: '🏖️', text: 'A place you loved that no longer exists the same way.' },
+    { emoji: '🗝️', text: 'The most beautiful place you\'ve ever been.' },
+    { emoji: '🏘️', text: 'What did your neighborhood look, sound, and feel like?' },
+    { emoji: '💭', text: 'A place you dream about or think about often.' },
+  ],
+  traditions: [
+    { emoji: '🌙', text: 'What did Ramadan feel like in your home when you were young?' },
+    { emoji: '🎊', text: 'Describe an Eid celebration — the morning, the food, the family.' },
+    { emoji: '💍', text: 'A wedding you remember — what made it special?' },
+    { emoji: '🍽️', text: 'What did a big family meal look like? Who cooked, who gathered?' },
+    { emoji: '🌺', text: 'A tradition your family kept that you want to pass on.' },
+    { emoji: '🕯️', text: 'A ritual or habit from your childhood home — big or small.' },
+  ],
+  recipes: [
+    { emoji: '🫕', text: 'Your most-requested dish — how do you make it, and where did it come from?' },
+    { emoji: '👩‍🍳', text: 'A recipe your mother or grandmother taught you.' },
+    { emoji: '🌿', text: 'A dish that takes you right back to a specific time or place.' },
+    { emoji: '🎉', text: 'What do you make for special occasions? How does it come together?' },
+    { emoji: '💡', text: 'A cooking tip or secret you\'ve never written down.' },
+    { emoji: '☕', text: 'Tell me about how you make tea or coffee — every step.' },
+  ],
+  anything: [
+    { emoji: '💌', text: 'What do you want your grandchildren to know about you?' },
+    { emoji: '📖', text: 'Something you believe strongly — a lesson life taught you.' },
+    { emoji: '😂', text: 'A story that still makes you laugh.' },
+    { emoji: '🌟', text: 'Something you are proud of that you\'ve never really talked about.' },
+    { emoji: '🔮', text: 'What advice would you give your younger self?' },
+    { emoji: '✨', text: 'Something you want people to understand about where you come from.' },
+  ],
+};
+
+const CATEGORY_LABELS = {
+  childhood: '🌿 Childhood',
+  family: '👨‍👩‍👧 Family',
+  places: '🗺️ Places',
+  traditions: '🪔 Traditions',
+  recipes: '🫕 Recipe',
+  anything: '💬 Other',
+};
+
+// ── TOAST ─────────────────────────────────────────────────
+function showToast(msg, duration = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ── LOCAL STORAGE ─────────────────────────────────────────
+function loadLocal() {
+  try { entries = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch(e) { entries = []; }
+}
+
+function saveLocal() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+// ── GOOGLE DRIVE ──────────────────────────────────────────
+function handleDriveClick() {
+  if (driveToken) {
+    syncToDrive();
+  } else {
+    signInWithGoogle();
+  }
+}
+
+function signInWithGoogle() {
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: (resp) => {
+      if (resp.error) { showToast('Could not connect to Google Drive'); return; }
+      driveToken = resp.access_token;
+      updateDriveUI(true);
+      syncToDrive();
+    },
+  });
+  client.requestAccessToken();
+}
+
+function updateDriveUI(connected) {
+  const btn = document.getElementById('drive-btn');
+  const lbl = document.getElementById('drive-label');
+  if (connected) {
+    btn.classList.add('connected');
+    lbl.textContent = 'Backed up ✓';
+  } else {
+    btn.classList.remove('connected');
+    lbl.textContent = 'Back up to Drive';
+  }
+}
+
+async function syncToDrive() {
+  if (!driveToken) return;
+  const data = JSON.stringify(entries, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+
+  try {
+    if (driveFileId) {
+      // Update existing file
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${driveToken}`, 'Content-Type': 'application/json' },
+        body: data,
+      });
+    } else {
+      // Create new file
+      const meta = { name: 'amal-memoir-backup.json', mimeType: 'application/json' };
+      const form = new FormData();
+      form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
+      form.append('file', blob);
+      const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${driveToken}` },
+        body: form,
+      });
+      const json = await res.json();
+      driveFileId = json.id;
+      localStorage.setItem(DRIVE_FILE_KEY, driveFileId);
+    }
+    updateDriveUI(true);
+    showToast('✓ Saved to Google Drive');
+  } catch(e) {
+    showToast('Drive save failed — stories still saved locally');
+  }
+}
+
+// ── SAVE (local + drive) ──────────────────────────────────
+function save() {
+  saveLocal();
+  if (driveToken) syncToDrive();
+}
+
+// ── COVER ─────────────────────────────────────────────────
+function enterApp() {
+  document.getElementById('cover').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  renderAll();
+}
+
+// ── TABS ──────────────────────────────────────────────────
+function switchTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+}
+
+// ── FONT ──────────────────────────────────────────────────
+function adjustFont(dir) {
+  fontScale = Math.max(-2, Math.min(4, fontScale + dir));
+  document.documentElement.style.setProperty('--base-size', (18 + fontScale * 2) + 'px');
+  localStorage.setItem('amal_fontscale', fontScale);
+}
+
+// ── VOICE TO TEXT ─────────────────────────────────────────
+function setupMic() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    document.getElementById('mic-btn').style.display = 'none';
+    return;
+  }
+  recognition = new SpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US'; // picks up Arabic/French words naturally even in en-US mode
+
+  let finalTranscript = '';
+
+  recognition.onstart = () => {
+    isListening = true;
+    document.getElementById('mic-btn').classList.add('listening');
+    document.getElementById('mic-btn').textContent = '⏹';
+    document.getElementById('mic-status').textContent = 'Listening… speak naturally in any language.';
+    document.getElementById('mic-status').classList.add('active');
+    finalTranscript = document.getElementById('entry-body').value;
+  };
+
+  recognition.onresult = (e) => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) {
+        finalTranscript += e.results[i][0].transcript + ' ';
+      } else {
+        interim += e.results[i][0].transcript;
+      }
+    }
+    document.getElementById('entry-body').value = finalTranscript + interim;
+  };
+
+  recognition.onerror = (e) => {
+    stopMic();
+    if (e.error === 'not-allowed') showToast('Microphone permission needed');
+  };
+
+  recognition.onend = () => {
+    if (isListening) recognition.start(); // keep going until user stops
+  };
+}
+
+function toggleMic() {
+  if (!recognition) { showToast('Voice input not supported in this browser'); return; }
+  if (isListening) { stopMic(); } else { recognition.start(); }
+}
+
+function stopMic() {
+  isListening = false;
+  if (recognition) recognition.stop();
+  document.getElementById('mic-btn').classList.remove('listening');
+  document.getElementById('mic-btn').textContent = '🎤';
+  document.getElementById('mic-status').textContent = '';
+  document.getElementById('mic-status').classList.remove('active');
+}
+
+// ── PROMPTS ───────────────────────────────────────────────
+function renderPrompts(category) {
+  const el = document.getElementById('prompts-' + category);
+  if (!el) return;
+  el.innerHTML = PROMPTS[category].map(p => `
+    <div class="prompt-card" onclick="openFormWithPrompt('${category}', ${JSON.stringify(p.text)})">
+      <span class="prompt-emoji">${p.emoji}</span>
+      <span class="prompt-text">${p.text}</span>
+    </div>
+  `).join('');
+}
+
+// ── FORM ──────────────────────────────────────────────────
+function openForm(category, id = null) {
+  stopMic();
+  const isRecipe = category === 'recipes';
+  const isEdit = id !== null;
+
+  document.getElementById('modal-title').textContent = isEdit ? 'Edit entry' : (isRecipe ? 'Add a Recipe' : 'Add a Memory');
+  document.getElementById('modal-desc').textContent = isEdit
+    ? 'Make any changes you like.'
+    : (isRecipe ? 'No measurements needed — just describe it the way you know it.'
+                : 'Write as much or as little as you like. You can always come back.');
+
+  document.getElementById('entry-category').value = category;
+  document.getElementById('entry-id').value = id || '';
+  document.getElementById('entry-title').value = '';
+  document.getElementById('entry-body').value = '';
+  document.getElementById('mic-status').textContent = '';
+
+  if (isEdit) {
+    const entry = entries.find(e => e.id === id);
+    if (entry) {
+      document.getElementById('entry-title').value = entry.title;
+      document.getElementById('entry-body').value = entry.body;
+    }
+  }
+
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('entry-title').focus(), 100);
+}
+
+function openFormWithPrompt(category, prompt) {
+  openForm(category);
+  document.getElementById('entry-body').value = prompt + '\n\n';
+  const ta = document.getElementById('entry-body');
+  ta.focus();
+  ta.selectionStart = ta.selectionEnd = ta.value.length;
+}
+
+function closeModal() {
+  stopMic();
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function saveEntry() {
+  stopMic();
+  const title = document.getElementById('entry-title').value.trim();
+  const body = document.getElementById('entry-body').value.trim();
+  const category = document.getElementById('entry-category').value;
+  const id = document.getElementById('entry-id').value;
+
+  if (!title && !body) { showToast('Please write something first, Amal!'); return; }
+
+  if (id) {
+    const idx = entries.findIndex(e => e.id === id);
+    if (idx >= 0) {
+      entries[idx].title = title || 'Untitled memory';
+      entries[idx].body = body;
+      entries[idx].updated = Date.now();
+    }
+  } else {
+    entries.unshift({
+      id: Date.now().toString(),
+      category,
+      title: title || 'Untitled memory',
+      body,
+      created: Date.now(),
+    });
+  }
+
+  save();
+  closeModal();
+  renderAll();
+  showToast('✓ Memory saved');
+}
+
+// ── DELETE ────────────────────────────────────────────────
+function promptDelete(id) {
+  deleteTargetId = id;
+  document.getElementById('delete-modal-overlay').style.display = 'flex';
+}
+function closeDeleteModal() {
+  document.getElementById('delete-modal-overlay').style.display = 'none';
+  deleteTargetId = null;
+}
+function confirmDelete() {
+  if (deleteTargetId) {
+    entries = entries.filter(e => e.id !== deleteTargetId);
+    save();
+    renderAll();
+  }
+  closeDeleteModal();
+}
+
+// ── READER ────────────────────────────────────────────────
+function openReader(id) {
+  const e = entries.find(e => e.id === id);
+  if (!e) return;
+  currentReaderId = id;
+  document.getElementById('reader-tag-label').textContent = CATEGORY_LABELS[e.category] || e.category;
+  document.getElementById('reader-title').textContent = e.title;
+  document.getElementById('reader-date').textContent = 'Written ' + new Date(e.created).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  document.getElementById('reader-body').textContent = e.body;
+  document.getElementById('reader-overlay').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+function closeReader() {
+  document.getElementById('reader-overlay').style.display = 'none';
+  currentReaderId = null;
+}
+
+// ── FACEBOOK SHARE ────────────────────────────────────────
+function shareToFacebook() {
+  const e = entries.find(e => e.id === currentReaderId);
+  if (!e) return;
+  const dateStr = new Date(e.created).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const text = `✦ ${e.title}\n\n${e.body}\n\n— Written ${dateStr}, from Amal's Book of Stories`;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('📋 Copied! Paste it into Facebook.');
+  }).catch(() => {
+    // Fallback: show in prompt
+    prompt('Copy this text and paste into Facebook:', text);
+  });
+}
+
+// ── PRINT BOOK ────────────────────────────────────────────
+function printBook() {
+  if (entries.length === 0) { showToast('No stories to print yet, Amal!'); return; }
+
+  const categories = ['childhood','family','places','traditions','recipes','anything'];
+  const catNames = { childhood:'Childhood', family:'Family', places:'Places', traditions:'Traditions & Celebrations', recipes:'Recipes & Food Memories', anything:'Other Memories' };
+
+  let html = `<div style="text-align:center;padding:4rem 2rem;page-break-after:always;">
+    <h1 style="font-family:Georgia,serif;font-size:36pt;margin-bottom:1rem;">Amal's Book of Stories</h1>
+    <p style="font-style:italic;font-size:14pt;color:#666;">A lifetime of memories, told in her own words</p>
+    <p style="margin-top:2rem;font-size:11pt;color:#888;">Printed ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}</p>
+  </div>`;
+
+  categories.forEach(cat => {
+    const catEntries = entries.filter(e => e.category === cat);
+    if (catEntries.length === 0) return;
+    html += `<div class="print-chapter">
+      <h2 style="font-family:Georgia,serif;font-size:22pt;border-bottom:2px solid #c9973a;padding-bottom:0.5rem;margin-bottom:2rem;">${catNames[cat]}</h2>`;
+    catEntries.forEach(e => {
+      const dateStr = new Date(e.created).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+      html += `<div class="print-story">
+        <div class="print-title">${e.title}</div>
+        <div class="print-date">${dateStr}</div>
+        <div class="print-body">${e.body}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  const pb = document.getElementById('print-book');
+  pb.innerHTML = html;
+  pb.style.display = 'block';
+  window.print();
+  pb.style.display = 'none';
+}
+
+// ── RENDER ────────────────────────────────────────────────
+function renderAll() {
+  renderHome();
+  ['childhood','family','places','traditions','recipes','anything'].forEach(cat => {
+    renderPrompts(cat);
+    renderStories(cat);
+  });
+}
+
+function renderHome() {
+  document.getElementById('stat-stories').textContent = entries.length;
+  document.getElementById('stat-recipes').textContent = entries.filter(e => e.category === 'recipes').length;
+  document.getElementById('stat-chapters').textContent = new Set(entries.map(e => e.category)).size;
+
+  const el = document.getElementById('home-recent');
+  const recent = entries.slice(0, 3);
+  if (recent.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">✦</div><div class="empty-state-text">Your stories are waiting to be told, Amal.</div></div>`;
+  } else {
+    el.innerHTML = `<div class="stories-list">${recent.map(e => storyCardHTML(e)).join('')}</div>`;
+  }
+}
+
+function renderStories(category) {
+  const el = document.getElementById('stories-' + category);
+  if (!el) return;
+  const cat = entries.filter(e => e.category === category);
+  if (cat.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">${category === 'recipes' ? '🫕' : '📖'}</div><div class="empty-state-text">No ${category === 'recipes' ? 'recipes' : 'stories'} yet — use a prompt above or add your own.</div></div>`;
+  } else {
+    el.innerHTML = cat.map(e => storyCardHTML(e, category === 'recipes')).join('');
+  }
+}
+
+function storyCardHTML(e, isRecipe = false) {
+  const preview = e.body ? e.body.replace(/\n/g,' ').slice(0,180) + (e.body.length > 180 ? '…' : '') : '';
+  const dateStr = new Date(e.created).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+  const id = e.id;
+  return `<div class="story-card ${isRecipe ? 'recipe-card' : ''}">
+    <div class="story-card-meta">
+      <span class="story-tag">${CATEGORY_LABELS[e.category] || e.category}</span>
+      <span class="story-date">${dateStr}</span>
+    </div>
+    <div class="story-title-card">${escHtml(e.title)}</div>
+    ${preview ? `<div class="story-preview">${escHtml(preview)}</div>` : ''}
+    <div class="story-actions">
+      <button class="btn-sm" onclick="openReader('${id}')">Read ↗</button>
+      <button class="btn-sm" onclick="openForm('${e.category}','${id}')">Edit</button>
+      <button class="btn-sm" onclick="shareStoryById('${id}')">📋 Share</button>
+      <button class="btn-sm danger" onclick="promptDelete('${id}')">Delete</button>
+    </div>
+  </div>`;
+}
+
+function shareStoryById(id) {
+  const e = entries.find(e => e.id === id);
+  if (!e) return;
+  const dateStr = new Date(e.created).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const text = `✦ ${e.title}\n\n${e.body}\n\n— Written ${dateStr}, from Amal's Book of Stories`;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('📋 Copied! Paste it into Facebook.');
+  }).catch(() => {
+    prompt('Copy this text and paste into Facebook:', text);
+  });
+}
+
+function escHtml(str) {
+  return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── INIT ──────────────────────────────────────────────────
+loadLocal();
+const sf = localStorage.getItem('amal_fontscale');
+if (sf) { fontScale = parseInt(sf); document.documentElement.style.setProperty('--base-size', (18 + fontScale*2)+'px'); }
+setupMic();
+
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>
