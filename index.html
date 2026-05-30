@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Amal's Book of Stories</title>
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="My Memoir">
@@ -659,12 +660,19 @@ function stopMic() {
 function renderPrompts(category) {
   const el = document.getElementById('prompts-' + category);
   if (!el) return;
-  el.innerHTML = PROMPTS[category].map(p => `
-    <div class="prompt-card" onclick="openFormWithPrompt('${category}', ${JSON.stringify(p.text)})">
+  el.innerHTML = PROMPTS[category].map((p, i) => `
+    <div class="prompt-card" data-category="${category}" data-index="${i}">
       <span class="prompt-emoji">${p.emoji}</span>
       <span class="prompt-text">${p.text}</span>
     </div>
   `).join('');
+  el.querySelectorAll('.prompt-card').forEach(card => {
+    card.addEventListener('click', function() {
+      const cat = this.dataset.category;
+      const idx = parseInt(this.dataset.index);
+      openFormWithPrompt(cat, PROMPTS[cat][idx].text);
+    });
+  });
 }
 
 // ── FORM ──────────────────────────────────────────────────
