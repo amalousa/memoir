@@ -174,7 +174,7 @@
   .home-sub { font-family: var(--font-display); font-style: italic; font-size: 1.05rem; color: #fdf6ee; margin-bottom: 2rem; }
   .stats-row { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
   .stat-box { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; flex: 1; min-width: 120px; text-align: center; }
-  .stat-num { font-family: var(--font-display); font-size: 2rem; font-weight: 600; color: var(--gold); display: block; }
+  .stat-num { font-family: var(--font-display); font-size: 2rem; font-weight: 600; color: #4a7c6f; display: block; }
   .stat-label { font-size: 0.82rem; color: var(--ink-faint); margin-top: 0.2rem; }
   .home-recent-title { font-family: var(--font-display); font-size: 1.2rem; color: var(--ink); margin-bottom: 1rem; }
 
@@ -271,9 +271,7 @@
         <div class="stat-box"><span class="stat-num" id="stat-recipes">0</span><div class="stat-label">Recipes saved</div></div>
         <div class="stat-box"><span class="stat-num" id="stat-chapters">0</span><div class="stat-label">Chapters touched</div></div>
       </div>
-      <div style="display:flex;gap:0.8rem;margin-bottom:2rem;flex-wrap:wrap;">
-        <button class="btn-new" style="margin-bottom:0;" onclick="printBook()">🖨️ Print my book</button>
-      </div>
+
       <div class="home-recent-title">Recently added</div>
       <div id="home-recent"></div>
     </section>
