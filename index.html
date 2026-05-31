@@ -169,7 +169,7 @@
   .empty-state-text { font-family: var(--font-display); font-style: italic; font-size: 1.1rem; }
 
   /* ── READER ── */
-  #reader-overlay { display: none; position: fixed; inset: 0; background: #441933; z-index: 200; overflow-y: auto; padding: 1rem; animation: fadeIn 0.3s ease; padding-bottom: 5rem; }
+  #reader-overlay { display: none; position: fixed; inset: 0; background: #441933; z-index: 50; overflow-y: auto; padding: 1rem; animation: fadeIn 0.3s ease; padding-top: 1rem; padding-bottom: 5rem; }
   .reader-inner { max-width: 680px; margin: 0 auto; background: #fdf6ee; border-radius: 16px; padding: 2rem; box-shadow: 0 8px 40px rgba(0,0,0,0.3); }
   .reader-back { display: inline-flex; align-items: center; gap: 0.4rem; color: #1e3a5f; background: none; border: none; font-family: var(--font-body); font-size: 0.95rem; cursor: pointer; margin-bottom: 2rem; padding: 0; }
   .reader-back:hover { text-decoration: underline; }
@@ -408,6 +408,7 @@
     <div class="reader-body" id="reader-body"></div>
     <div class="reader-share-row">
       <button class="btn-new" style="margin-bottom:0;" onclick="shareToFacebook()">📋 Copy for Facebook</button>
+      <button class="btn-new" style="margin-bottom:0;" onclick="editFromReader()">Edit</button>
     </div>
   </div>
 </div>
@@ -780,12 +781,21 @@ function closeReader() {
   currentReaderId = null;
 }
 
+function editFromReader() {
+  const id = currentReaderId;
+  if (!id) return;
+  const e = entries.find(e => e.id === id);
+  if (!e) return;
+  closeReader();
+  openForm(e.category, id);
+}
+
 // ── FACEBOOK SHARE ────────────────────────────────────────
 function shareToFacebook() {
   const e = entries.find(e => e.id === currentReaderId);
   if (!e) return;
   const dateStr = new Date(e.created).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-  const text = `✦ ${e.title}\n\n${e.body}\n\n— Written ${dateStr}, from Amal's Book of Stories`;
+  const text = `${e.title}\n\n${e.body}\n\n— Written ${dateStr}, from Amal's Book of Stories`;
   navigator.clipboard.writeText(text).then(() => {
     showToast('📋 Copied! Paste it into Facebook.');
   }).catch(() => {
@@ -885,7 +895,7 @@ function shareStoryById(id) {
   const e = entries.find(e => e.id === id);
   if (!e) return;
   const dateStr = new Date(e.created).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  const text = `✦ ${e.title}\n\n${e.body}\n\n— Written ${dateStr}, from Amal's Book of Stories`;
+  const text = `${e.title}\n\n${e.body}\n\n— Written ${dateStr}, from Amal's Book of Stories`;
   navigator.clipboard.writeText(text).then(() => {
     showToast('📋 Copied! Paste it into Facebook.');
   }).catch(() => {
