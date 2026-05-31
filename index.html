@@ -328,7 +328,7 @@
     <section id="tab-stories" class="section">
       <div class="section-header">
         <div class="section-title" style="color:#fdf6ee;">All Stories</div>
-        <div class="section-hint" style="color:rgba(253,246,238,0.6);">Everything you've written, all in one place.</div>
+        <div class="section-hint" style="color:rgba(253,246,238,0.6);">Everything you've written, all in one place. <span id="stories-count"></span></div>
       </div>
       <div id="all-stories-list" class="stories-list"></div>
     </section>
@@ -342,7 +342,7 @@
         <div class="settings-item">
           <div class="settings-item-text">
             <div class="settings-label">Save to Drive</div>
-            <div class="settings-sub">Saves all your stories to your Google account</div>
+            <div class="settings-sub" id="last-backup-text">Saves all your stories to your Google account</div>
           </div>
           <button class="settings-btn" id="drive-btn" onclick="handleDriveClick()">
             <span id="drive-label">Connect Drive</span>
@@ -590,45 +590,82 @@ function updateDriveUI(connected) {
   }
 }
 
-async function syncToDrive() {
+async function syncToDrive(silent = false) {
   if (!driveToken) return;
-  const data = JSON.stringify(entries, null, 2);
+
+  // Never backup 0 stories
+  if (entries.length === 0) {
+    if (!silent) showToast("Nothing to save yet! Write some stories first.");
+    return;
+  }
+
+  // Confirm with user unless silent (auto-backup)
+  if (!silent) {
+    const ok = confirm(`You have ${entries.length} ${entries.length === 1 ? 'story' : 'stories'}. Save them to Google Drive now?`);
+    if (!ok) return;
+  }
+
+  const backedUpAt = new Date().toISOString();
+  const payload = { stories: entries, backedUpAt, storyCount: entries.length };
+  const data = JSON.stringify(payload, null, 2);
   const blob = new Blob([data], { type: 'application/json' });
 
   try {
     if (driveFileId) {
-      // Update existing file
       await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${driveToken}`, 'Content-Type': 'application/json' },
         body: data,
       });
     } else {
-      // Create new file
-      const meta = { name: `memoir-backup-${new Date().toISOString().slice(0,10)}.json`, mimeType: 'application/json' };
-      const form = new FormData();
-      form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
-      form.append('file', blob);
-      const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${driveToken}` },
-        body: form,
-      });
-      const json = await res.json();
-      driveFileId = json.id;
-      localStorage.setItem(DRIVE_FILE_KEY, driveFileId);
+      // Search for existing memoir-backup.json first
+      const searchRes = await fetch(
+        "https://www.googleapis.com/drive/v3/files?q=name='memoir-backup.json'+and+trashed=false&pageSize=1",
+        { headers: { Authorization: `Bearer ${driveToken}` } }
+      );
+      const searchData = await searchRes.json();
+      const existing = (searchData.files || [])[0];
+
+      if (existing) {
+        driveFileId = existing.id;
+        localStorage.setItem(DRIVE_FILE_KEY, driveFileId);
+        await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${driveToken}`, 'Content-Type': 'application/json' },
+          body: data,
+        });
+      } else {
+        const meta = { name: 'memoir-backup.json', mimeType: 'application/json' };
+        const form = new FormData();
+        form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
+        form.append('file', blob);
+        const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${driveToken}` },
+          body: form,
+        });
+        const json = await res.json();
+        driveFileId = json.id;
+        localStorage.setItem(DRIVE_FILE_KEY, driveFileId);
+      }
     }
+
+    // Save last backup info
+    const backupMeta = { at: backedUpAt, count: entries.length };
+    localStorage.setItem('amal_last_backup', JSON.stringify(backupMeta));
     updateDriveUI(true);
-    showToast('✓ Saved to Google Drive');
+    updateLastBackupText();
+    showToast(`Done! Your ${entries.length} ${entries.length === 1 ? 'story' : 'stories'} are safely saved.`);
   } catch(e) {
-    showToast('Drive save failed — stories still saved locally');
+    showToast("Couldn't save to Google Drive. Your stories are still safe on this device.");
+    console.error(e);
   }
 }
 
 // ── SAVE (local + drive) ──────────────────────────────────
 function save() {
   saveLocal();
-  if (driveToken) syncToDrive();
+  if (driveToken) syncToDrive(true);
 }
 
 // ── COVER ─────────────────────────────────────────────────
@@ -877,6 +914,8 @@ function printBook() {
 function renderAll() {
   renderHome();
   renderChapterCards();
+  updateLastBackupText();
+  updateStoryCount();
 }
 
 function renderHome() {
@@ -971,48 +1010,61 @@ function handleImportClick() {
 }
 
 async function importFromDrive() {
-  showToast('Looking for backup in Drive…');
+  showToast('Looking for your backup in Google Drive…');
   try {
-    // Search for backup files
     const searchRes = await fetch(
-      "https://www.googleapis.com/drive/v3/files?q=name+contains+'memoir-backup'+and+trashed=false&orderBy=modifiedTime+desc&pageSize=10",
+      "https://www.googleapis.com/drive/v3/files?q=name='memoir-backup.json'+and+trashed=false&pageSize=1",
       { headers: { Authorization: `Bearer ${driveToken}` } }
     );
     const searchData = await searchRes.json();
     const files = searchData.files || [];
 
     if (files.length === 0) {
-      showToast('No backup found in Google Drive');
+      showToast("We couldn't find a backup in Google Drive.");
       return;
     }
 
-    // Use most recent
     const file = files[0];
     const fileRes = await fetch(
       `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`,
       { headers: { Authorization: `Bearer ${driveToken}` } }
     );
-    const restored = await fileRes.json();
+    const backupData = await fileRes.json();
+
+    // Handle both old format (array) and new format (object with stories)
+    const restored = Array.isArray(backupData) ? backupData : (backupData.stories || []);
+    const backedUpAt = backupData.backedUpAt ? new Date(backupData.backedUpAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'unknown date';
 
     if (!Array.isArray(restored)) {
-      showToast('Backup file looks corrupted');
+      showToast('The backup file looks damaged. Please try again.');
       return;
     }
 
-    // Merge: combine local + Drive stories, dedupe by ID, keep most recently modified
+    if (restored.length === 0) {
+      showToast("The backup we found is empty. Nothing was changed.");
+      return;
+    }
+
+    // Warn if backup has fewer stories than local
+    if (restored.length < entries.length) {
+      const ok = confirm(`Heads up! The backup from ${backedUpAt} has ${restored.length} ${restored.length === 1 ? 'story' : 'stories'}, but you currently have ${entries.length} on this device.\n\nAre you sure you want to use this older backup? We'll combine both to keep everything safe.`);
+      if (!ok) return;
+    } else {
+      const ok = confirm(`We found a backup from ${backedUpAt} with ${restored.length} ${restored.length === 1 ? 'story' : 'stories'}.\n\nYou currently have ${entries.length} ${entries.length === 1 ? 'story' : 'stories'} on this device.\n\nWe'll combine everything and keep the most recent version of each story. Continue?`);
+      if (!ok) return;
+    }
+
+    // Merge
     const localMap = {};
     entries.forEach(e => { localMap[e.id] = e; });
-
     const driveMap = {};
     restored.forEach(e => { driveMap[e.id] = e; });
-
     const allIds = new Set([...Object.keys(localMap), ...Object.keys(driveMap)]);
     const merged = [];
     allIds.forEach(id => {
       const local = localMap[id];
       const drive = driveMap[id];
       if (local && drive) {
-        // Keep whichever was modified more recently
         const localTime = new Date(local.updated || local.created || 0).getTime();
         const driveTime = new Date(drive.updated || drive.created || 0).getTime();
         merged.push(driveTime >= localTime ? drive : local);
@@ -1021,24 +1073,41 @@ async function importFromDrive() {
       }
     });
 
-    const newCount = merged.length - entries.length;
-    const updatedCount = merged.filter(e => driveMap[e.id] && localMap[e.id]).length;
-
-    if (!confirm(`Merge ${restored.length} Drive stories with your ${entries.length} local stories?\n\n${newCount > 0 ? `+${newCount} new stories from Drive` : 'No new stories'}\n${updatedCount} stories compared by date. Continue?`)) return;
-
     entries = merged;
     saveLocal();
     driveFileId = file.id;
     localStorage.setItem(DRIVE_FILE_KEY, driveFileId);
     renderAll();
-    showToast(`✓ Merged — ${merged.length} total stories`);
+    showToast(`All done! You now have ${merged.length} ${merged.length === 1 ? 'story' : 'stories'}.`);
   } catch(e) {
-    showToast('Restore failed — check your connection');
+    showToast("Something went wrong. Your stories are still safe on this device.");
     console.error(e);
   }
 }
 
 // ── NIGHT MODE ────────────────────────────────────────────
+
+function updateLastBackupText() {
+  const el = document.getElementById('last-backup-text');
+  if (!el) return;
+  const raw = localStorage.getItem('amal_last_backup');
+  if (raw) {
+    try {
+      const { at, count } = JSON.parse(raw);
+      const date = new Date(at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+      el.textContent = `Last saved: ${date} — ${count} ${count === 1 ? 'story' : 'stories'}`;
+    } catch(e) { el.textContent = 'Saves all your stories to your Google account'; }
+  } else {
+    el.textContent = 'Saves all your stories to your Google account';
+  }
+}
+
+function updateStoryCount() {
+  const el = document.getElementById('stories-count');
+  if (!el) return;
+  const n = entries.length;
+  el.textContent = n > 0 ? `(${n} ${n === 1 ? 'story' : 'stories'})` : '';
+}
 
 
 // ── CHAPTER CONFIG ────────────────────────────────────────
