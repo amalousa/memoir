@@ -299,7 +299,7 @@
   <p class="cover-text">
     This is your space — for the stories only you can tell. Take your time. There are no wrong answers here.
   </p>
-  <button class="btn-primary" onclick="enterApp()">Begin <img src="./assets/images/sprout.svg" alt="" style="width:1em;height:1em;vertical-align:middle;opacity:0.7;filter:brightness(0) invert(1);"></button>
+  <button class="btn-primary" onclick="enterApp()">Begin <img src="./assets/images/sprout.svg" alt="" style="width:1em;height:1em;vertical-align:middle;filter:brightness(0) saturate(100%) invert(8%) sepia(40%) saturate(800%) hue-rotate(260deg);"></button>
 </div>
 
 <!-- APP -->
@@ -436,7 +436,7 @@
 <!-- WRITE MODAL -->
 <div id="modal-overlay">
   <div class="modal" id="write-modal">
-    <h2 id="modal-title">Add a Memory</h2>
+    <h2 id="modal-title">Add a Story</h2>
     <p id="modal-desc">Write as much or as little as you like. You can always come back and add more.</p>
 
     <label class="form-label" for="entry-title">Give it a title</label>
@@ -453,7 +453,7 @@
     <input type="hidden" id="entry-id">
 
     <div class="form-actions">
-      <button class="btn-save" onclick="saveEntry()">Save this memory ✦</button>
+      <button class="btn-save" onclick="saveEntry()">Save <img src="./assets/images/sprout.svg" alt="" style="width:1em;height:1em;vertical-align:middle;filter:brightness(0) saturate(100%) invert(8%) sepia(40%) saturate(800%) hue-rotate(260deg);"></button>
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
     </div>
   </div>
@@ -760,7 +760,7 @@ function openForm(category, id = null) {
   const isRecipe = category === 'recipes';
   const isEdit = id !== null;
 
-  document.getElementById('modal-title').textContent = isEdit ? 'Edit entry' : (isRecipe ? 'Add a Recipe' : 'Add a Memory');
+  document.getElementById('modal-title').textContent = isEdit ? 'Edit entry' : (isRecipe ? 'Add a Recipe' : 'Add a Story');
   document.getElementById('modal-desc').textContent = isEdit
     ? 'Make any changes you like.'
     : (isRecipe ? 'No measurements needed — just describe it the way you know it.'
