@@ -67,24 +67,33 @@
   .btn-primary:active { transform: translateY(0); }
 
   /* ── APP SHELL ── */
-  #app { display: none; min-height: 100vh; }
+  #app { display: none; min-height: 100vh; padding-bottom: 70px; }
 
-  header { background: var(--aubergine); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(61,26,74,0.3); }
-  .header-left .header-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; color: var(--warm-white); }
-  .header-left .header-sub { font-family: var(--font-display); font-style: italic; font-size: 0.85rem; color: var(--gold-light); }
-  .header-right { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; justify-content: flex-end; }
+  header { background: var(--aubergine); padding: 0.8rem 1.2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(61,26,74,0.3); }
+  .header-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--warm-white); }
+
+  .night-toggle { background: none; border: none; cursor: pointer; color: var(--warm-white); padding: 0.4rem; opacity: 0.8; transition: opacity 0.2s; display: flex; align-items: center; }
+  .night-toggle:hover { opacity: 1; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 200; background: var(--aubergine); border-top: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: space-around; padding: 0.6rem 0 0.8rem; box-shadow: 0 -2px 16px rgba(61,26,74,0.3); }
+  .nav-action { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.6); font-family: var(--font-body); font-size: 0.65rem; transition: color 0.2s; padding: 0 0.8rem; }
+  .nav-action:hover { color: #5bbcbc; }
+  .nav-action.active { color: #5bbcbc; }
+  .nav-action svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .nav-action span { font-size: 0.65rem; }
+  .font-pair { display: flex; gap: 0.3rem; align-items: center; }
+  .font-pair button { background: none; border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.6); border-radius: 4px; padding: 0.15rem 0.4rem; font-size: 0.75rem; cursor: pointer; font-family: var(--font-body); transition: all 0.2s; }
+  .font-pair button:hover { color: #5bbcbc; border-color: #5bbcbc; }
+
+  /* ── NIGHT MODE ── */
+  body.night { --cream: #1a0a12; --warm-white: #2a1520; --ink: #f0e6d8; --ink-soft: #c8b09a; --ink-faint: #8a7060; --border: #4a2a3a; --shadow: rgba(0,0,0,0.3); }
 
   /* ── DRIVE STATUS ── */
   .drive-btn { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.9rem; border-radius: 20px; font-family: var(--font-body); font-size: 0.8rem; cursor: pointer; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1); color: var(--warm-white); transition: all 0.2s; white-space: nowrap; }
   .drive-btn:hover { border-color: var(--gold-light); color: var(--gold-light); background: rgba(255,255,255,0.15); }
   .drive-btn.connected { border-color: #7ecbb8; color: #7ecbb8; }
   .drive-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-
-  /* ── FONT CONTROLS ── */
-  .font-controls { display: flex; align-items: center; gap: 0.4rem; }
-  .font-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25); color: var(--warm-white); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-  .font-btn:hover { border-color: var(--gold-light); color: var(--gold-light); }
-  .font-label { font-size: 0.75rem; color: rgba(255,255,255,0.5); }
 
   /* ── NAV ── */
   nav { display: flex; background: var(--warm-white); border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
@@ -232,22 +241,12 @@
 <!-- APP -->
 <div id="app">
   <header>
-    <div class="header-left">
-      <div class="header-title">Amal's Book of Stories</div>
-      <div class="header-sub">Your memories, your words</div>
-    </div>
-    <div class="header-right">
-      <button class="drive-btn" id="import-btn" onclick="handleImportClick()" title="Restore from Google Drive">↓ Restore</button>
-      <button class="drive-btn" id="drive-btn" onclick="handleDriveClick()" title="Back up to Google Drive">
-        <span class="drive-dot"></span>
-        <span id="drive-label">Back up to Drive</span>
-      </button>
-      <div class="font-controls">
-        <span class="font-label">Text</span>
-        <button class="font-btn" onclick="adjustFont(-1)">A−</button>
-        <button class="font-btn" onclick="adjustFont(1)">A+</button>
-      </div>
-    </div>
+    <div class="header-title">Amal's Stories</div>
+    <button class="night-toggle" onclick="toggleNight()" title="Toggle night mode">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
   </header>
 
   <nav>
@@ -344,6 +343,29 @@
     </section>
 
   </main>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <button class="nav-action active" onclick="switchTab('home', document.querySelector('.tab'))">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-action" id="drive-footer-btn" onclick="handleDriveClick()">
+      <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+      <span id="drive-footer-label">Backup</span>
+    </button>
+    <button class="nav-action" onclick="handleImportClick()">
+      <svg viewBox="0 0 24 24"><polyline points="8 16 12 20 16 16"/><line x1="12" y1="12" x2="12" y2="20"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+      <span>Restore</span>
+    </button>
+    <div class="nav-action">
+      <div class="font-pair">
+        <button onclick="adjustFont(-1)">A−</button>
+        <button onclick="adjustFont(1)">A+</button>
+      </div>
+      <span>Text</span>
+    </div>
+  </div>
 </div>
 
 <!-- READER OVERLAY -->
@@ -983,10 +1005,17 @@ async function importFromDrive() {
   }
 }
 
+// ── NIGHT MODE ────────────────────────────────────────────
+function toggleNight() {
+  document.body.classList.toggle('night');
+  localStorage.setItem('amal_night', document.body.classList.contains('night') ? '1' : '0');
+}
+
 // ── INIT ──────────────────────────────────────────────────
 loadLocal();
 const sf = localStorage.getItem('amal_fontscale');
 if (sf) { fontScale = parseInt(sf); document.documentElement.style.setProperty('--base-size', (18 + fontScale*2)+'px'); }
+if (localStorage.getItem('amal_night') === '1') document.body.classList.add('night');
 setupMic();
 
 document.getElementById('modal-overlay').addEventListener('click', function(e) {
