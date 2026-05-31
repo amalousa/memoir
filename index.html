@@ -1017,16 +1017,39 @@ async function importFromDrive() {
       return;
     }
 
-    if (entries.length > 0) {
-      if (!confirm(`This will replace your ${entries.length} current stories with ${restored.length} stories from Drive. Continue?`)) return;
-    }
+    // Merge: combine local + Drive stories, dedupe by ID, keep most recently modified
+    const localMap = {};
+    entries.forEach(e => { localMap[e.id] = e; });
 
-    entries = restored;
+    const driveMap = {};
+    restored.forEach(e => { driveMap[e.id] = e; });
+
+    const allIds = new Set([...Object.keys(localMap), ...Object.keys(driveMap)]);
+    const merged = [];
+    allIds.forEach(id => {
+      const local = localMap[id];
+      const drive = driveMap[id];
+      if (local && drive) {
+        // Keep whichever was modified more recently
+        const localTime = new Date(local.updated || local.created || 0).getTime();
+        const driveTime = new Date(drive.updated || drive.created || 0).getTime();
+        merged.push(driveTime >= localTime ? drive : local);
+      } else {
+        merged.push(local || drive);
+      }
+    });
+
+    const newCount = merged.length - entries.length;
+    const updatedCount = merged.filter(e => driveMap[e.id] && localMap[e.id]).length;
+
+    if (!confirm(`Merge ${restored.length} Drive stories with your ${entries.length} local stories?\n\n${newCount > 0 ? `+${newCount} new stories from Drive` : 'No new stories'}\n${updatedCount} stories compared by date. Continue?`)) return;
+
+    entries = merged;
     saveLocal();
     driveFileId = file.id;
     localStorage.setItem(DRIVE_FILE_KEY, driveFileId);
     renderAll();
-    showToast(`✓ Restored ${restored.length} stories from Drive`);
+    showToast(`✓ Merged — ${merged.length} total stories`);
   } catch(e) {
     showToast('Restore failed — check your connection');
     console.error(e);
