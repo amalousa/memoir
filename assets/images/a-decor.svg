@@ -67,5 +67,5 @@
     <path d="M100,147.77c-26.34,0-47.77-21.43-47.77-47.77s21.43-47.77,47.77-47.77,47.77,21.43,47.77,47.77-21.43,47.77-47.77,47.77ZM100,54.49c-25.09,0-45.51,20.41-45.51,45.51s20.41,45.51,45.51,45.51,45.51-20.41,45.51-45.51-20.41-45.51-45.51-45.51Z" style="fill: #e2c676;"/>
     <path d="M100,142.12c-23.22,0-42.12-18.89-42.12-42.12s18.89-42.12,42.12-42.12,42.12,18.89,42.12,42.12-18.89,42.12-42.12,42.12ZM100,60.14c-21.98,0-39.86,17.88-39.86,39.86s17.88,39.86,39.86,39.86,39.86-17.88,39.86-39.86-17.88-39.86-39.86-39.86Z" style="fill: #c2922e;"/>
   </g>
-  <text transform="translate(84.52 115.47)" style="fill: #e2c676; font-family: BigCaslon-Medium, &apos;Big Caslon&apos;; font-size: 48.98px; font-weight: 500;"><tspan x="0" y="0">A</tspan></text>
+  <text transform="translate(84.52 115.47)" style="fill: #5bbcbd; font-family: BigCaslon-Medium, &apos;Big Caslon&apos;; font-size: 48.98px; font-weight: 500;"><tspan x="0" y="0">A</tspan></text>
 </svg>
