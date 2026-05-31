@@ -123,13 +123,13 @@
   .form-label { display: block; font-size: 0.88rem; font-weight: 500; color: #1e3a5f; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.06em; }
   .form-input { width: 100%; padding: 0.8rem 1rem; font-family: var(--font-body); font-size: 1rem; color: #1e3a5f; background: #f5ede0; border: 1px solid #d4b896; border-radius: 8px; margin-bottom: 1.2rem; transition: border-color 0.2s; outline: none; }
   .form-input:focus { border-color: #1e3a5f; }
-  .form-input::placeholder { color: #8a9bbf; }
+  .form-input::placeholder { color: #5bbcbc; }
 
   /* ── TEXTAREA + MIC ── */
   .textarea-wrap { position: relative; margin-bottom: 1.2rem; }
   .form-textarea { width: 100%; padding: 1rem 3.5rem 1rem 1rem; font-family: var(--font-body); font-size: 1.05rem; color: #1e3a5f; background: #f5ede0; border: 1px solid #d4b896; border-radius: 8px; min-height: 220px; resize: vertical; line-height: 1.8; outline: none; transition: border-color 0.2s; }
   .form-textarea:focus { border-color: #1e3a5f; }
-  .form-textarea::placeholder { color: #8a9bbf; }
+  .form-textarea::placeholder { color: #5bbcbc; }
 
   .mic-btn { position: absolute; top: 0.8rem; right: 0.8rem; width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: all 0.2s; background: var(--warm-white); border: 1px solid var(--border); color: var(--ink-soft); }
   .mic-btn:hover { border-color: var(--gold); color: var(--gold); }
@@ -423,13 +423,14 @@
     <input class="form-input" type="text" id="entry-title" placeholder="e.g. The summer I learned to bake bread">
 
     <label class="form-label">Tell the story</label>
-    <div id="modal-prompt-label" style="display:none; font-family:'Noto Sans Symbols 2',sans-serif; font-size:0.82rem; text-transform:none; letter-spacing:1px; color:#c0392b; font-style:italic; margin-bottom:0.5rem;"></div>
+    <div id="modal-prompt-label" style="display:none; font-family:'Noto Sans Symbols 2',sans-serif; font-size:0.82rem; letter-spacing:0; color:#5bbcbc; font-style:italic; margin-bottom:0.5rem;"></div>
     <div class="textarea-wrap">
       <textarea class="form-textarea" id="entry-body" placeholder="Start wherever feels right…"></textarea>
     </div>
 
     <input type="hidden" id="entry-category">
     <input type="hidden" id="entry-id">
+    <input type="hidden" id="entry-prompt">
 
     <div class="form-actions">
       <button class="btn-save" onclick="saveEntry()">Save <img src="./assets/images/sprout.svg" alt="" style="width:1em;height:1em;vertical-align:middle;filter:brightness(0) saturate(100%) invert(8%) sepia(40%) saturate(800%) hue-rotate(260deg);"></button>
@@ -693,6 +694,7 @@ function openForm(category, id = null) {
   document.getElementById('entry-body').value = '';
   const pl = document.getElementById('modal-prompt-label');
   if (pl) { pl.style.display = 'none'; pl.textContent = ''; }
+  document.getElementById('entry-prompt').value = '';
 
   if (isEdit) {
     const entry = entries.find(e => e.id === id);
@@ -709,8 +711,9 @@ function openForm(category, id = null) {
 function openFormWithPrompt(category, prompt) {
   openForm(category);
   const label = document.getElementById('modal-prompt-label');
-  label.textContent = 'Prompt — ' + prompt;
+  label.textContent = 'Prompt: ' + prompt;
   label.style.display = 'block';
+  document.getElementById('entry-prompt').value = prompt;
   document.getElementById('entry-body').value = '';
   const ta = document.getElementById('entry-body');
   ta.focus();
@@ -725,6 +728,7 @@ function saveEntry() {
   const body = document.getElementById('entry-body').value.trim();
   const category = document.getElementById('entry-category').value;
   const id = document.getElementById('entry-id').value;
+  const prompt = document.getElementById('entry-prompt').value.trim();
 
   if (!title && !body) { showToast('Please write something first, Amal!'); return; }
 
@@ -741,6 +745,7 @@ function saveEntry() {
       category,
       title: title || 'Untitled memory',
       body,
+      prompt: prompt || null,
       created: Date.now(),
     });
   }
@@ -778,19 +783,28 @@ function openReader(id) {
   document.getElementById('reader-title').textContent = e.title;
   document.getElementById('reader-date').textContent = 'Written ' + new Date(e.created).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
   const parts = e.body.split(/\n\n+/);
-  if (parts.length > 1) {
+  const body = document.getElementById('reader-body');
+  body.innerHTML = '';
+  if (e.prompt) {
+    const promptEl = document.createElement('p');
+    promptEl.textContent = e.prompt;
+    promptEl.style.cssText = 'color:#c0392b;font-style:italic;font-family:Spectral,Georgia,serif;margin-bottom:1.5rem;line-height:1.8;';
+    body.appendChild(promptEl);
+    const rest = document.createElement('div');
+    rest.style.whiteSpace = 'pre-wrap';
+    rest.textContent = e.body;
+    body.appendChild(rest);
+  } else if (parts.length > 1) {
     const first = document.createElement('p');
     first.textContent = parts[0];
     first.style.cssText = 'color:#c0392b;font-style:italic;font-family:Spectral,Georgia,serif;margin-bottom:1.5rem;line-height:1.8;';
+    body.appendChild(first);
     const rest = document.createElement('div');
     rest.style.whiteSpace = 'pre-wrap';
     rest.textContent = parts.slice(1).join('\n\n');
-    const body = document.getElementById('reader-body');
-    body.innerHTML = '';
-    body.appendChild(first);
     body.appendChild(rest);
   } else {
-    document.getElementById('reader-body').textContent = e.body;
+    body.textContent = e.body;
   }
   document.getElementById('reader-overlay').style.display = 'block';
   window.scrollTo(0, 0);
