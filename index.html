@@ -73,16 +73,7 @@
   header { background: var(--aubergine); padding: 0.8rem 1.2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(61,26,74,0.3); }
   .header-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--warm-white); }
 
-  .night-toggle { background: none; border: none; cursor: pointer; padding: 0.4rem; display: flex; align-items: center; gap: 0.5rem; }
-  .night-toggle:hover { opacity: 1; }
-
-  /* ── TOGGLE SWITCH ── */
-  .toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
-  .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
-  .toggle-track { display: block; width: 44px; height: 24px; background: rgba(255,255,255,0.2); border-radius: 12px; transition: background 0.25s; cursor: pointer; position: relative; }
-  .toggle-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: rgba(255,255,255,0.6); transition: transform 0.25s, background 0.25s; }
-  input:checked + .toggle-track { background: #5bbcbc; }
-  input:checked + .toggle-track::after { transform: translateX(20px); background: #fff; }
+  .night-toggle { display: none; }
 
   /* ── BOTTOM NAV ── */
   .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 200; background: var(--aubergine); border-top: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: space-around; padding: 0.6rem 0 0.8rem; box-shadow: 0 -2px 16px rgba(61,26,74,0.3); }
@@ -96,8 +87,7 @@
   .font-pair button:hover { color: #5bbcbc; border-color: #5bbcbc; }
 
   /* ── NIGHT MODE ── */
-  body.night { --cream: #441933; --warm-white: #1a2d4a; --ink: #f0e6d8; --ink-soft: #c8b09a; --ink-faint: #8a7060; --border: #2a4a6a; --shadow: rgba(0,0,0,0.3); }
-  body.night .header-title { color: #d4b896; }
+
 
   /* ── DRIVE STATUS ── */
   .drive-btn { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.9rem; border-radius: 20px; font-family: var(--font-body); font-size: 0.8rem; cursor: pointer; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1); color: var(--warm-white); transition: all 0.2s; white-space: nowrap; }
@@ -309,11 +299,7 @@
       <img src="./assets/images/a-decor.svg" alt="" width="36" height="36">
       <div class="header-title">Amal's Stories</div>
     </div>
-    <button class="night-toggle" onclick="toggleNight()" id="night-moon-btn" title="Toggle night mode">
-      <svg id="night-moon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5bbcbc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-      </svg>
-    </button>
+
   </header>
 
 
@@ -377,16 +363,7 @@
             <button onclick="adjustFont(1)">A+</button>
           </div>
         </div>
-        <div class="settings-item">
-          <div class="settings-item-text">
-            <div class="settings-label">Night mode</div>
-            <div class="settings-sub">Easier on the eyes in low light</div>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="night-checkbox" onchange="toggleNight()">
-            <span class="toggle-track"></span>
-          </label>
-        </div>
+
       </div>
     </section>
 
@@ -1055,15 +1032,7 @@ async function importFromDrive() {
 }
 
 // ── NIGHT MODE ────────────────────────────────────────────
-function toggleNight() {
-  document.body.classList.toggle('night');
-  const isNight = document.body.classList.contains('night');
-  localStorage.setItem('amal_night', isNight ? '1' : '0');
-  const cb = document.getElementById('night-checkbox');
-  if (cb) cb.checked = isNight;
-  const moon = document.getElementById('night-moon-svg');
-  if (moon) { moon.setAttribute('fill', isNight ? '#5bbcbc' : 'none'); }
-}
+
 
 // ── CHAPTER CONFIG ────────────────────────────────────────
 const CHAPTERS = [
@@ -1214,13 +1183,7 @@ loadLocal();
 loadPromptState();
 const sf = localStorage.getItem('amal_fontscale');
 if (sf) { fontScale = parseInt(sf); const size = 18 + fontScale*2; document.documentElement.style.setProperty('--base-size', size+'px'); document.documentElement.style.fontSize = size+'px'; }
-if (localStorage.getItem('amal_night') === '1') {
-  document.body.classList.add('night');
-  const cb = document.getElementById('night-checkbox');
-  if (cb) cb.checked = true;
-  const moon = document.getElementById('night-moon-svg');
-  if (moon) moon.setAttribute('fill', '#5bbcbc');
-}
+
 setupMic();
 
 document.getElementById('modal-overlay').addEventListener('click', function(e) {
