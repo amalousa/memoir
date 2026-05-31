@@ -1,8 +1,9 @@
-const CACHE = 'memoir-v1';
+const DEV_MODE = true;
+const CACHE = 'memoir-v2';
 const ASSETS = ['./', './index.html', './manifest.json', './apple-touch-icon.png', './icon-192x192.png'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  if (!DEV_MODE) e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
   self.skipWaiting();
 });
 
@@ -14,6 +15,7 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  if (DEV_MODE) return;
   e.respondWith(
     caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match('./index.html')))
   );
