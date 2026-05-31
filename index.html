@@ -169,8 +169,8 @@
   .empty-state-text { font-family: var(--font-display); font-style: italic; font-size: 1.1rem; }
 
   /* ── READER ── */
-  #reader-overlay { display: none; position: fixed; inset: 0; background: #fdf6ee; z-index: 200; overflow-y: auto; padding: 2rem; animation: fadeIn 0.3s ease; }
-  .reader-inner { max-width: 680px; margin: 0 auto; }
+  #reader-overlay { display: none; position: fixed; inset: 0; background: #441933; z-index: 200; overflow-y: auto; padding: 1rem; animation: fadeIn 0.3s ease; padding-bottom: 5rem; }
+  .reader-inner { max-width: 680px; margin: 0 auto; background: #fdf6ee; border-radius: 16px; padding: 2rem; box-shadow: 0 8px 40px rgba(0,0,0,0.3); }
   .reader-back { display: inline-flex; align-items: center; gap: 0.4rem; color: #1e3a5f; background: none; border: none; font-family: var(--font-body); font-size: 0.95rem; cursor: pointer; margin-bottom: 2rem; padding: 0; }
   .reader-back:hover { text-decoration: underline; }
   .reader-tag { margin-bottom: 0.5rem; }
@@ -327,8 +327,8 @@
     <!-- STORIES PAGE -->
     <section id="tab-stories" class="section">
       <div class="section-header">
-        <div class="section-title">All Stories</div>
-        <div class="section-hint">Everything you've written, all in one place.</div>
+        <div class="section-title" style="color:#fdf6ee;">All Stories</div>
+        <div class="section-hint" style="color:rgba(253,246,238,0.6);">Everything you've written, all in one place.</div>
       </div>
       <div id="all-stories-list" class="stories-list"></div>
     </section>
@@ -341,7 +341,7 @@
       <div class="settings-list">
         <div class="settings-item">
           <div class="settings-item-text">
-            <div class="settings-label">Back up to Google Drive</div>
+            <div class="settings-label">Save to Drive</div>
             <div class="settings-sub">Saves all your stories to your Google account</div>
           </div>
           <button class="settings-btn" id="drive-btn" onclick="handleDriveClick()">
@@ -422,10 +422,8 @@
     <input class="form-input" type="text" id="entry-title" placeholder="e.g. The summer I learned to bake bread">
 
     <label class="form-label">Tell the story</label>
-    <div class="mic-status" id="mic-status"></div>
     <div class="textarea-wrap">
       <textarea class="form-textarea" id="entry-body" placeholder="Start wherever feels right…"></textarea>
-      <button class="mic-btn" id="mic-btn" onclick="toggleMic()" title="Speak your story">🎤</button>
     </div>
 
     <input type="hidden" id="entry-category">
@@ -472,8 +470,7 @@ let deleteTargetId = null;
 let fontScale = 0;
 let driveToken = null;
 let driveFileId = localStorage.getItem(DRIVE_FILE_KEY) || null;
-let recognition = null;
-let isListening = false;
+
 let currentReaderId = null;
 
 // ── PROMPTS ───────────────────────────────────────────────
@@ -656,63 +653,7 @@ function adjustFont(dir) {
 }
 
 // ── VOICE TO TEXT ─────────────────────────────────────────
-function setupMic() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    document.getElementById('mic-btn').style.display = 'none';
-    return;
-  }
-  recognition = new SpeechRecognition();
-  recognition.continuous = true;
-  recognition.interimResults = true;
-  recognition.lang = 'en-US'; // picks up Arabic/French words naturally even in en-US mode
 
-  let finalTranscript = '';
-
-  recognition.onstart = () => {
-    isListening = true;
-    document.getElementById('mic-btn').classList.add('listening');
-    document.getElementById('mic-btn').textContent = '⏹';
-    document.getElementById('mic-status').textContent = 'Listening… speak naturally in any language.';
-    document.getElementById('mic-status').classList.add('active');
-    finalTranscript = document.getElementById('entry-body').value;
-  };
-
-  recognition.onresult = (e) => {
-    let interim = '';
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      if (e.results[i].isFinal) {
-        finalTranscript += e.results[i][0].transcript + ' ';
-      } else {
-        interim += e.results[i][0].transcript;
-      }
-    }
-    document.getElementById('entry-body').value = finalTranscript + interim;
-  };
-
-  recognition.onerror = (e) => {
-    stopMic();
-    if (e.error === 'not-allowed') showToast('Microphone permission needed');
-  };
-
-  recognition.onend = () => {
-    if (isListening) recognition.start(); // keep going until user stops
-  };
-}
-
-function toggleMic() {
-  if (!recognition) { showToast('Voice input not supported in this browser'); return; }
-  if (isListening) { stopMic(); } else { recognition.start(); }
-}
-
-function stopMic() {
-  isListening = false;
-  if (recognition) recognition.stop();
-  document.getElementById('mic-btn').classList.remove('listening');
-  document.getElementById('mic-btn').textContent = '🎤';
-  document.getElementById('mic-status').textContent = '';
-  document.getElementById('mic-status').classList.remove('active');
-}
 
 // ── PROMPTS ───────────────────────────────────────────────
 function renderPrompts(category) {
@@ -735,7 +676,6 @@ function renderPrompts(category) {
 
 // ── FORM ──────────────────────────────────────────────────
 function openForm(category, id = null) {
-  stopMic();
   const isRecipe = category === 'recipes';
   const isEdit = id !== null;
 
@@ -749,7 +689,6 @@ function openForm(category, id = null) {
   document.getElementById('entry-id').value = id || '';
   document.getElementById('entry-title').value = '';
   document.getElementById('entry-body').value = '';
-  document.getElementById('mic-status').textContent = '';
 
   if (isEdit) {
     const entry = entries.find(e => e.id === id);
@@ -772,12 +711,10 @@ function openFormWithPrompt(category, prompt) {
 }
 
 function closeModal() {
-  stopMic();
   document.getElementById('modal-overlay').classList.remove('open');
 }
 
 function saveEntry() {
-  stopMic();
   const title = document.getElementById('entry-title').value.trim();
   const body = document.getElementById('entry-body').value.trim();
   const category = document.getElementById('entry-category').value;
@@ -1208,7 +1145,7 @@ loadPromptState();
 const sf = localStorage.getItem('amal_fontscale');
 if (sf) { fontScale = parseInt(sf); const size = 18 + fontScale*2; document.documentElement.style.setProperty('--base-size', size+'px'); document.documentElement.style.fontSize = size+'px'; }
 
-setupMic();
+
 
 document.getElementById('modal-overlay').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
