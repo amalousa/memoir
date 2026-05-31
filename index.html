@@ -246,8 +246,8 @@
   .mag-prompt { background: rgba(255,255,255,0.12); border-radius: 10px; cursor: pointer; overflow: hidden; transition: background 0.2s; }
   .mag-prompt:hover { background: rgba(255,255,255,0.18); }
   .mag-prompt-row { display: flex; align-items: center; gap: 0.8rem; padding: 0.9rem 1rem; }
-  .mag-prompt-emoji { font-size: 1.2rem; flex-shrink: 0; }
-  .mag-prompt-text { font-family: var(--font-body); font-size: 0.95rem; color: #fdf6ee; line-height: 1.5; flex: 1; }
+  .mag-prompt-emoji { width: 1.1rem; height: 1.1rem; flex-shrink: 0; opacity: 0.8; }
+  .mag-prompt-text { font-family: var(--font-ui); font-size: 0.95rem; color: #fdf6ee; line-height: 1.5; flex: 1; letter-spacing: 0.5px; }
   .mag-prompt-text.done { opacity: 0.45; text-decoration: line-through; }
   .mag-prompt-check { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; }
   .mag-prompt-check.written { background: #5bbcbc; color: #471041; }
@@ -479,52 +479,52 @@ let currentReaderId = null;
 // ── PROMPTS ───────────────────────────────────────────────
 const PROMPTS = {
   childhood: [
-    { emoji: '🏠', text: 'What was your childhood home like? What did it smell like, look like, feel like?' },
-    { emoji: '👧', text: 'What games did you play as a child? Who did you play with?' },
-    { emoji: '📚', text: 'Tell me about school — a teacher you loved, a day that stands out.' },
-    { emoji: '🌙', text: 'What were summers like when you were young?' },
-    { emoji: '🎈', text: 'What was your favorite thing about being a child?' },
-    { emoji: '😢', text: 'Was there something hard about growing up that shaped who you became?' },
+    { emoji: './assets/images/4star.svg', text: 'What was your childhood home like? What did it smell like, look like, feel like?' },
+    { emoji: './assets/images/4star.svg', text: 'What games did you play as a child? Who did you play with?' },
+    { emoji: './assets/images/4star.svg', text: 'Tell me about school — a teacher you loved, a day that stands out.' },
+    { emoji: './assets/images/4star.svg', text: 'What were summers like when you were young?' },
+    { emoji: './assets/images/4star.svg', text: 'What was your favorite thing about being a child?' },
+    { emoji: './assets/images/4star.svg', text: 'Was there something hard about growing up that shaped who you became?' },
   ],
   family: [
-    { emoji: '👵', text: 'Tell me about your grandmother — what do you remember most?' },
-    { emoji: '👨', text: 'What was your father like? A story that shows who he was.' },
-    { emoji: '❤️', text: 'How did you meet your husband? What was that time like?' },
-    { emoji: '🤝', text: 'A moment with a sibling you\'ll never forget.' },
-    { emoji: '🏡', text: 'Describe a typical evening in your family home when you were growing up.' },
-    { emoji: '💬', text: 'What is something a family member used to say that you still think about?' },
+    { emoji: './assets/images/4star.svg', text: 'Tell me about your grandmother — what do you remember most?' },
+    { emoji: './assets/images/4star.svg', text: 'What was your father like? A story that shows who he was.' },
+    { emoji: './assets/images/4star.svg', text: 'How did you meet your husband? What was that time like?' },
+    { emoji: './assets/images/4star.svg', text: 'A moment with a sibling you\'ll never forget.' },
+    { emoji: './assets/images/4star.svg', text: 'Describe a typical evening in your family home when you were growing up.' },
+    { emoji: './assets/images/4star.svg', text: 'What is something a family member used to say that you still think about?' },
   ],
   places: [
-    { emoji: '🌍', text: 'The city or town where you grew up — describe it as it was then.' },
-    { emoji: '✈️', text: 'Tell me about a move or journey that changed your life.' },
-    { emoji: '🏖️', text: 'A place you loved that no longer exists the same way.' },
-    { emoji: '🗝️', text: 'The most beautiful place you\'ve ever been.' },
-    { emoji: '🏘️', text: 'What did your neighborhood look, sound, and feel like?' },
-    { emoji: '💭', text: 'A place you dream about or think about often.' },
+    { emoji: './assets/images/4star.svg', text: 'The city or town where you grew up — describe it as it was then.' },
+    { emoji: './assets/images/4star.svg', text: 'Tell me about a move or journey that changed your life.' },
+    { emoji: './assets/images/4star.svg', text: 'A place you loved that no longer exists the same way.' },
+    { emoji: './assets/images/4star.svg', text: 'The most beautiful place you\'ve ever been.' },
+    { emoji: './assets/images/4star.svg', text: 'What did your neighborhood look, sound, and feel like?' },
+    { emoji: './assets/images/4star.svg', text: 'A place you dream about or think about often.' },
   ],
   traditions: [
-    { emoji: '🌙', text: 'What did Ramadan feel like in your home when you were young?' },
-    { emoji: '🎊', text: 'Describe an Eid celebration — the morning, the food, the family.' },
-    { emoji: '💍', text: 'A wedding you remember — what made it special?' },
-    { emoji: '🍽️', text: 'What did a big family meal look like? Who cooked, who gathered?' },
-    { emoji: '🌺', text: 'A tradition your family kept that you want to pass on.' },
-    { emoji: '🕯️', text: 'A ritual or habit from your childhood home — big or small.' },
+    { emoji: './assets/images/4star.svg', text: 'What did Ramadan feel like in your home when you were young?' },
+    { emoji: './assets/images/4star.svg', text: 'Describe an Eid celebration — the morning, the food, the family.' },
+    { emoji: './assets/images/4star.svg', text: 'A wedding you remember — what made it special?' },
+    { emoji: './assets/images/4star.svg', text: 'What did a big family meal look like? Who cooked, who gathered?' },
+    { emoji: './assets/images/4star.svg', text: 'A tradition your family kept that you want to pass on.' },
+    { emoji: './assets/images/4star.svg', text: 'A ritual or habit from your childhood home — big or small.' },
   ],
   recipes: [
-    { emoji: '🫕', text: 'Your most-requested dish — how do you make it, and where did it come from?' },
-    { emoji: '👩‍🍳', text: 'A recipe your mother or grandmother taught you.' },
-    { emoji: '🌿', text: 'A dish that takes you right back to a specific time or place.' },
-    { emoji: '🎉', text: 'What do you make for special occasions? How does it come together?' },
-    { emoji: '💡', text: 'A cooking tip or secret you\'ve never written down.' },
-    { emoji: '☕', text: 'Tell me about how you make tea or coffee — every step.' },
+    { emoji: './assets/images/4star.svg', text: 'Your most-requested dish — how do you make it, and where did it come from?' },
+    { emoji: './assets/images/4star.svg', text: 'A recipe your mother or grandmother taught you.' },
+    { emoji: './assets/images/4star.svg', text: 'A dish that takes you right back to a specific time or place.' },
+    { emoji: './assets/images/4star.svg', text: 'What do you make for special occasions? How does it come together?' },
+    { emoji: './assets/images/4star.svg', text: 'A cooking tip or secret you\'ve never written down.' },
+    { emoji: './assets/images/4star.svg', text: 'Tell me about how you make tea or coffee — every step.' },
   ],
   anything: [
-    { emoji: '💌', text: 'What do you want your grandchildren to know about you?' },
-    { emoji: '📖', text: 'Something you believe strongly — a lesson life taught you.' },
-    { emoji: '😂', text: 'A story that still makes you laugh.' },
-    { emoji: '🌟', text: 'Something you are proud of that you\'ve never really talked about.' },
-    { emoji: '🔮', text: 'What advice would you give your younger self?' },
-    { emoji: '✨', text: 'Something you want people to understand about where you come from.' },
+    { emoji: './assets/images/4star.svg', text: 'What do you want your grandchildren to know about you?' },
+    { emoji: './assets/images/4star.svg', text: 'Something you believe strongly — a lesson life taught you.' },
+    { emoji: './assets/images/4star.svg', text: 'A story that still makes you laugh.' },
+    { emoji: './assets/images/4star.svg', text: 'Something you are proud of that you\'ve never really talked about.' },
+    { emoji: './assets/images/4star.svg', text: 'What advice would you give your younger self?' },
+    { emoji: './assets/images/4star.svg', text: 'Something you want people to understand about where you come from.' },
   ],
 };
 
@@ -1038,12 +1038,12 @@ async function importFromDrive() {
 
 // ── CHAPTER CONFIG ────────────────────────────────────────
 const CHAPTERS = [
-  { id: 'childhood', label: 'Childhood', emoji: '🌿', color: '#4a7c6f', hint: 'The places you grew up, the people who shaped you.' },
-  { id: 'family', label: 'Family', emoji: '👨‍👩‍👧', color: '#d4882a', hint: 'The people who made you who you are.' },
-  { id: 'places', label: 'Places', emoji: '🗺️', color: '#1e3a5f', hint: 'Every home, every city that changed you.' },
-  { id: 'traditions', label: 'Traditions', emoji: '🪔', color: '#6b1e36', hint: 'The rituals that made ordinary days sacred.' },
-  { id: 'recipes', label: 'Recipes', emoji: '🫕', color: '#3d1a4a', hint: 'No measurements needed — just the story.' },
-  { id: 'anything', label: 'Anything Else', emoji: '💬', color: '#1a5276', hint: "If it doesn't fit anywhere else, it belongs here." },
+  { id: 'childhood', label: 'Childhood', emoji: './assets/images/girl.svg', color: '#31573a', hint: 'The places you grew up, the people who shaped you.' },
+  { id: 'family', label: 'Family', emoji: './assets/images/sun.svg', color: '#d4882a', hint: 'The people who made you who you are.' },
+  { id: 'places', label: 'Places', emoji: './assets/images/bird.svg', color: '#1e3a5f', hint: 'Every home, every city that changed you.' },
+  { id: 'traditions', label: 'Traditions', emoji: './assets/images/flower.svg', color: '#6b1e36', hint: 'The rituals that made ordinary days sacred.' },
+  { id: 'recipes', label: 'Recipes', emoji: './assets/images/cherries.svg', color: '#3d1a4a', hint: 'No measurements needed — just the story.' },
+  { id: 'anything', label: 'Anything Else', emoji: './assets/images/lips.svg', color: '#1a5276', hint: "If it doesn't fit anywhere else, it belongs here." },
 ];
 
 // ── PROMPT STATE ──────────────────────────────────────────
@@ -1084,7 +1084,7 @@ function renderChapterCards() {
     const written = PROMPTS[ch.id].filter((_, i) => promptState[getPromptKey(ch.id, i)] === 'written').length;
     const pct = total > 0 ? Math.round((written / total) * 100) : 0;
     return `<div class="chapter-card" style="background:${ch.color};" onclick="openChapter('${ch.id}')">
-      <span class="chapter-card-emoji">${ch.emoji}</span>
+      <span class="chapter-card-emoji"><img src="${ch.emoji}" alt="" style="width:2rem;height:2rem;filter:brightness(0) invert(1);opacity:0.9;"></span>
       <div class="chapter-card-name">${ch.label}</div>
       <div class="chapter-card-count">${count} ${count === 1 ? 'story' : 'stories'}</div>
       <div class="chapter-progress"><div class="chapter-progress-fill" style="width:${pct}%"></div></div>
@@ -1114,9 +1114,8 @@ function renderMagazine() {
       const expanded = expandedPrompt === key;
       return `<div class="mag-prompt" id="mag-prompt-${key}">
         <div class="mag-prompt-row" onclick="togglePromptExpand('${key}')">
-          <span class="mag-prompt-emoji">${p.emoji}</span>
+          <img class="mag-prompt-emoji" src="${p.emoji}" alt="" style="filter:brightness(0) invert(1);">
           <span class="mag-prompt-text${isWritten ? ' done' : ''}">${escHtml(p.text)}</span>
-          <span class="mag-prompt-check ${isWritten ? 'written' : 'unwritten'}">${isWritten ? '✓' : ''}</span>
         </div>
         ${expanded ? `<div class="mag-prompt-actions">
           <button class="mag-btn mag-btn-write" onclick="writeFromPrompt('${ch.id}',${i})">Write this</button>
@@ -1129,7 +1128,7 @@ function renderMagazine() {
     return `<div class="magazine-chapter" id="mag-chapter-${ch.id}" style="background:${ch.color};">
       <div class="magazine-header">
         <div>
-          <div class="magazine-chapter-title">${ch.emoji} ${ch.label}</div>
+          <div class="magazine-chapter-title"><img src="${ch.emoji}" alt="" style="width:1.4rem;height:1.4rem;vertical-align:middle;filter:brightness(0) invert(1);opacity:0.9;margin-right:0.4rem;"> ${ch.label}</div>
           <div class="magazine-chapter-hint">${ch.hint}</div>
         </div>
         <button class="magazine-add-btn" onclick="openForm('${ch.id}')">+ Add</button>
