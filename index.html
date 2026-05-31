@@ -423,7 +423,7 @@
     <input class="form-input" type="text" id="entry-title" placeholder="e.g. The summer I learned to bake bread">
 
     <label class="form-label">Tell the story</label>
-    <div id="modal-prompt-label" style="display:none; font-family:'Noto Sans Symbols 2',sans-serif; font-size:0.72rem; text-transform:uppercase; letter-spacing:4px; color:#c0392b; font-style:italic; margin-bottom:0.5rem;"></div>
+    <div id="modal-prompt-label" style="display:none; font-family:'Noto Sans Symbols 2',sans-serif; font-size:0.82rem; text-transform:none; letter-spacing:1px; color:#c0392b; font-style:italic; margin-bottom:0.5rem;"></div>
     <div class="textarea-wrap">
       <textarea class="form-textarea" id="entry-body" placeholder="Start wherever feels right…"></textarea>
     </div>
@@ -777,7 +777,21 @@ function openReader(id) {
   document.getElementById('reader-tag-label').innerHTML = CATEGORY_LABELS[e.category] || e.category;
   document.getElementById('reader-title').textContent = e.title;
   document.getElementById('reader-date').textContent = 'Written ' + new Date(e.created).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-  document.getElementById('reader-body').textContent = e.body;
+  const parts = e.body.split(/\n\n+/);
+  if (parts.length > 1) {
+    const first = document.createElement('p');
+    first.textContent = parts[0];
+    first.style.cssText = 'color:#c0392b;font-style:italic;font-family:Spectral,Georgia,serif;margin-bottom:1.5rem;line-height:1.8;';
+    const rest = document.createElement('div');
+    rest.style.whiteSpace = 'pre-wrap';
+    rest.textContent = parts.slice(1).join('\n\n');
+    const body = document.getElementById('reader-body');
+    body.innerHTML = '';
+    body.appendChild(first);
+    body.appendChild(rest);
+  } else {
+    document.getElementById('reader-body').textContent = e.body;
+  }
   document.getElementById('reader-overlay').style.display = 'block';
   window.scrollTo(0, 0);
 }
