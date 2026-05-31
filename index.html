@@ -466,6 +466,7 @@ const CLIENT_ID = '800155776650-jpnr85qn3gug5ldfs2ifkq1urh4nts9f.apps.googleuser
 const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 const STORAGE_KEY = 'amal_memoir_v1';
 const DRIVE_FILE_KEY = 'amal_drive_file_id';
+const DRIVE_FOLDER_KEY = 'amal_drive_folder_id';
 
 // ── STATE ─────────────────────────────────────────────────
 let entries = [];
@@ -473,6 +474,7 @@ let deleteTargetId = null;
 let fontScale = 0;
 let driveToken = null;
 let driveFileId = localStorage.getItem(DRIVE_FILE_KEY) || null;
+let driveFolderId = localStorage.getItem(DRIVE_FOLDER_KEY) || null;
 
 let currentReaderId = null;
 
@@ -611,16 +613,50 @@ async function syncToDrive(silent = false) {
   const blob = new Blob([data], { type: 'application/json' });
 
   try {
+    // Get or create the stories-backups folder
+    if (!driveFolderId) {
+      // Search for existing folder
+      const folderSearch = await fetch(
+        "https://www.googleapis.com/drive/v3/files?q=name='stories-backups'+and+mimeType='application/vnd.google-apps.folder'+and+trashed=false&pageSize=1",
+        { headers: { Authorization: `Bearer ${driveToken}` } }
+      );
+      const folderData = await folderSearch.json();
+      const existingFolder = (folderData.files || [])[0];
+      if (existingFolder) {
+        driveFolderId = existingFolder.id;
+      } else {
+        const folderRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${driveToken}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: 'stories-backups', mimeType: 'application/vnd.google-apps.folder' }),
+        });
+        const folderJson = await folderRes.json();
+        driveFolderId = folderJson.id;
+      }
+      localStorage.setItem(DRIVE_FOLDER_KEY, driveFolderId);
+    }
+
+    const date = new Date().toISOString().slice(0, 10);
+    const count = entries.length;
+    const fileName = `stories-${date}-${count}${count === 1 ? 'story' : 'stories'}.json`;
+
     if (driveFileId) {
+      // Update existing file content
       await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${driveToken}`, 'Content-Type': 'application/json' },
         body: data,
       });
+      // Also update the filename to reflect current date/count
+      await fetch(`https://www.googleapis.com/drive/v3/files/${driveFileId}`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${driveToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: fileName }),
+      });
     } else {
-      // Search for existing memoir-backup.json first
+      // Check for any existing stories-backups file in the folder
       const searchRes = await fetch(
-        "https://www.googleapis.com/drive/v3/files?q=name='memoir-backup.json'+and+trashed=false&pageSize=1",
+        `https://www.googleapis.com/drive/v3/files?q='${driveFolderId}'+in+parents+and+name+contains+'stories-'+and+trashed=false&orderBy=modifiedTime+desc&pageSize=1`,
         { headers: { Authorization: `Bearer ${driveToken}` } }
       );
       const searchData = await searchRes.json();
@@ -634,8 +670,13 @@ async function syncToDrive(silent = false) {
           headers: { Authorization: `Bearer ${driveToken}`, 'Content-Type': 'application/json' },
           body: data,
         });
+        await fetch(`https://www.googleapis.com/drive/v3/files/${driveFileId}`, {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${driveToken}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: fileName }),
+        });
       } else {
-        const meta = { name: 'memoir-backup.json', mimeType: 'application/json' };
+        const meta = { name: fileName, mimeType: 'application/json', parents: [driveFolderId] };
         const form = new FormData();
         form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
         form.append('file', blob);
@@ -1013,7 +1054,7 @@ async function importFromDrive() {
   showToast('Looking for your backup in Google Drive…');
   try {
     const searchRes = await fetch(
-      "https://www.googleapis.com/drive/v3/files?q=name='memoir-backup.json'+and+trashed=false&pageSize=1",
+      "https://www.googleapis.com/drive/v3/files?q=(name+contains+'stories-'+or+name+contains+'memoir-backup')+and+trashed=false&orderBy=modifiedTime+desc&pageSize=10",
       { headers: { Authorization: `Bearer ${driveToken}` } }
     );
     const searchData = await searchRes.json();
