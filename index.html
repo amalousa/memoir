@@ -15,7 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Spectral:ital,wght@0,400;0,500;1,400&family=Golos+Text:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --cream: #4A1534;
+    --cream: #2952a3;
     --warm-white: #fdf6ee;
     --gold: #d4882a;
     --gold-light: #e8a83a;
@@ -83,12 +83,13 @@
   .nav-action.active { color: #5bbcbc; }
   .nav-action svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .nav-action span { font-size: 0.65rem; }
-  .font-pair { display: flex; gap: 0.3rem; align-items: center; }
-  .font-pair button { background: none; border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.6); border-radius: 4px; padding: 0.15rem 0.4rem; font-size: 0.75rem; cursor: pointer; font-family: var(--font-body); transition: all 0.2s; }
+  .font-pair { display: flex; gap: 0.8rem; align-items: center; }
+  .font-pair button { background: none; border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.6); border-radius: 6px; padding: 0.4rem 0.8rem; font-size: 1rem; cursor: pointer; font-family: var(--font-body); transition: all 0.2s; }
   .font-pair button:hover { color: #5bbcbc; border-color: #5bbcbc; }
 
   /* ── NIGHT MODE ── */
   body.night { --cream: #1a0a12; --warm-white: #2a1520; --ink: #f0e6d8; --ink-soft: #c8b09a; --ink-faint: #8a7060; --border: #4a2a3a; --shadow: rgba(0,0,0,0.3); }
+  body.night .header-title { color: #d4b896; }
 
   /* ── DRIVE STATUS ── */
   .drive-btn { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.9rem; border-radius: 20px; font-family: var(--font-body); font-size: 0.8rem; cursor: pointer; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1); color: var(--warm-white); transition: all 0.2s; white-space: nowrap; }
@@ -339,7 +340,7 @@
     <!-- SETTINGS PAGE -->
     <section id="tab-settings" class="section">
       <div class="section-header">
-        <div class="section-title">Settings</div>
+        <div class="section-title" style="color:#fdf6ee;">Settings</div>
       </div>
       <div class="settings-list">
         <div class="settings-item">
