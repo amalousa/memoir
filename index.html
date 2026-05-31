@@ -261,12 +261,16 @@
   .mag-btn-remove:hover { background: rgba(192,57,43,0.5); }
 
   /* ── SETTINGS ── */
-  .settings-list { display: flex; flex-direction: column; gap: 0; }
-  .settings-item { background: var(--warm-white); border-bottom: 1px solid var(--border); padding: 1.2rem 1.5rem; }
-  .settings-item:first-child { border-radius: 12px 12px 0 0; }
-  .settings-item:last-child { border-radius: 0 0 12px 12px; border-bottom: none; }
-  .settings-label { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 0.2rem; }
-  .settings-sub { font-size: 0.85rem; color: var(--ink-faint); margin-bottom: 0.7rem; }
+  .settings-list { display: flex; flex-direction: column; gap: 0.8rem; }
+  .settings-item { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 1.3rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .settings-item-text { flex: 1; min-width: 0; }
+  .settings-label { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: #fdf6ee; margin-bottom: 0.2rem; }
+  .settings-sub { font-size: 0.85rem; color: rgba(253,246,238,0.55); line-height: 1.4; }
+  .settings-btn { background: #5bbcbc; color: #471041; border: none; padding: 0.55rem 1.2rem; font-family: var(--font-ui); font-size: 0.78rem; letter-spacing: 0.07em; text-transform: uppercase; border-radius: 30px; cursor: pointer; font-weight: 500; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
+  .settings-btn:hover { background: #4aacac; transform: translateY(-1px); }
+  .settings-btn.connected { background: rgba(126,203,184,0.2); color: #7ecbb8; border: 1px solid #7ecbb8; }
+  .settings-btn.ghost { background: rgba(255,255,255,0.1); color: #fdf6ee; border: 1px solid rgba(255,255,255,0.25); }
+  .settings-btn.ghost:hover { background: rgba(255,255,255,0.18); }
 
   /* ── MAIN NAV ACTIVE ── */
   .nav-action.active { color: #5bbcbc; }
@@ -339,30 +343,37 @@
       </div>
       <div class="settings-list">
         <div class="settings-item">
-          <div class="settings-label">Back up to Google Drive</div>
-          <div class="settings-sub">Saves all your stories to your Google account</div>
-          <button class="drive-btn" id="drive-btn" onclick="handleDriveClick()">
-            <span class="drive-dot"></span>
+          <div class="settings-item-text">
+            <div class="settings-label">Back up to Google Drive</div>
+            <div class="settings-sub">Saves all your stories to your Google account</div>
+          </div>
+          <button class="settings-btn" id="drive-btn" onclick="handleDriveClick()">
             <span id="drive-label">Connect Drive</span>
           </button>
         </div>
         <div class="settings-item">
-          <div class="settings-label">Restore from Drive</div>
-          <div class="settings-sub">Bring back your stories from a previous backup</div>
-          <button class="drive-btn" onclick="handleImportClick()">↓ Restore</button>
+          <div class="settings-item-text">
+            <div class="settings-label">Restore from Drive</div>
+            <div class="settings-sub">Bring back your stories from a previous backup</div>
+          </div>
+          <button class="settings-btn ghost" onclick="handleImportClick()">↓ Restore</button>
         </div>
         <div class="settings-item">
-          <div class="settings-label">Text size</div>
-          <div class="settings-sub">Make the text bigger or smaller</div>
-          <div class="font-pair" style="margin-top:0.5rem;">
+          <div class="settings-item-text">
+            <div class="settings-label">Text size</div>
+            <div class="settings-sub">Make the text bigger or smaller</div>
+          </div>
+          <div class="font-pair">
             <button onclick="adjustFont(-1)">A−</button>
             <button onclick="adjustFont(1)">A+</button>
           </div>
         </div>
         <div class="settings-item">
-          <div class="settings-label">Night mode</div>
-          <div class="settings-sub">Easier on the eyes in low light</div>
-          <button class="drive-btn" onclick="toggleNight()">Toggle</button>
+          <div class="settings-item-text">
+            <div class="settings-label">Night mode</div>
+            <div class="settings-sub">Easier on the eyes in low light</div>
+          </div>
+          <button class="settings-btn ghost" onclick="toggleNight()">Toggle</button>
         </div>
       </div>
     </section>
