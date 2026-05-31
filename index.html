@@ -223,6 +223,54 @@
     .modal { padding: 1.2rem; }
     .header-right { gap: 0.4rem; }
   }
+
+  /* ── CHAPTER CARDS (home) ── */
+  .chapter-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .chapter-card { border-radius: 14px; padding: 1.2rem 1rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
+  .chapter-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+  .chapter-card-emoji { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+  .chapter-card-name { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: #fdf6ee; margin-bottom: 0.3rem; }
+  .chapter-card-count { font-family: var(--font-ui); font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255,255,255,0.65); margin-bottom: 0.5rem; }
+  .chapter-progress { height: 3px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; }
+  .chapter-progress-fill { height: 100%; background: #5bbcbc; border-radius: 3px; transition: width 0.4s ease; }
+
+  /* ── MAGAZINE PROMPTS ── */
+  .magazine-chapter { margin-bottom: 0; }
+  .magazine-header { padding: 1.5rem 1.5rem 1rem; display: flex; align-items: center; justify-content: space-between; }
+  .magazine-chapter-title { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; color: #fdf6ee; }
+  .magazine-chapter-hint { font-family: var(--font-body); font-style: italic; font-size: 0.9rem; color: rgba(255,255,255,0.65); margin-top: 0.2rem; }
+  .magazine-add-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fdf6ee; font-family: var(--font-ui); font-size: 0.72rem; letter-spacing: 0.07em; text-transform: uppercase; padding: 0.4rem 0.9rem; border-radius: 20px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .magazine-add-btn:hover { background: rgba(255,255,255,0.25); }
+  .magazine-prompts { padding: 0 1rem 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .mag-prompt { background: rgba(255,255,255,0.12); border-radius: 10px; cursor: pointer; overflow: hidden; transition: background 0.2s; }
+  .mag-prompt:hover { background: rgba(255,255,255,0.18); }
+  .mag-prompt-row { display: flex; align-items: center; gap: 0.8rem; padding: 0.9rem 1rem; }
+  .mag-prompt-emoji { font-size: 1.2rem; flex-shrink: 0; }
+  .mag-prompt-text { font-family: var(--font-body); font-size: 0.95rem; color: #fdf6ee; line-height: 1.5; flex: 1; }
+  .mag-prompt-text.done { opacity: 0.45; text-decoration: line-through; }
+  .mag-prompt-check { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; }
+  .mag-prompt-check.written { background: #5bbcbc; color: #471041; }
+  .mag-prompt-check.unwritten { border: 1.5px solid rgba(255,255,255,0.3); }
+  .mag-prompt-actions { display: flex; gap: 0.5rem; padding: 0 1rem 0.9rem 3.4rem; }
+  .mag-btn { font-family: var(--font-ui); font-size: 0.72rem; letter-spacing: 0.07em; text-transform: uppercase; padding: 0.35rem 0.8rem; border-radius: 20px; cursor: pointer; border: none; transition: all 0.2s; }
+  .mag-btn-write { background: #5bbcbc; color: #471041; }
+  .mag-btn-write:hover { background: #4aacac; }
+  .mag-btn-skip { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); }
+  .mag-btn-skip:hover { background: rgba(255,255,255,0.25); }
+  .mag-btn-remove { background: rgba(192,57,43,0.3); color: #faa; }
+  .mag-btn-remove:hover { background: rgba(192,57,43,0.5); }
+
+  /* ── SETTINGS ── */
+  .settings-list { display: flex; flex-direction: column; gap: 0; }
+  .settings-item { background: var(--warm-white); border-bottom: 1px solid var(--border); padding: 1.2rem 1.5rem; }
+  .settings-item:first-child { border-radius: 12px 12px 0 0; }
+  .settings-item:last-child { border-radius: 0 0 12px 12px; border-bottom: none; }
+  .settings-label { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 0.2rem; }
+  .settings-sub { font-size: 0.85rem; color: var(--ink-faint); margin-bottom: 0.7rem; }
+
+  /* ── MAIN NAV ACTIVE ── */
+  .nav-action.active { color: #5bbcbc; }
+
 </style>
 </head>
 <body>
@@ -255,14 +303,8 @@
     </button>
   </header>
 
-  <nav>
-    <button class="tab active" onclick="switchTab('home', this)">🏠 Home</button>
-    <button class="tab" onclick="switchTab('childhood', this)">🌿 Childhood</button>
-    <button class="tab" onclick="switchTab('family', this)">👨‍👩‍👧 Family</button>
-    <button class="tab" onclick="switchTab('places', this)">🗺️ Places</button>
-    <button class="tab" onclick="switchTab('traditions', this)">🪔 Traditions</button>
-    <button class="tab" onclick="switchTab('recipes', this)">🫕 Recipes</button>
-    <button class="tab" onclick="switchTab('anything', this)">💬 Anything Else</button>
+
+  <nav id="chapter-nav" style="display:none;">
   </nav>
 
   <main>
@@ -271,103 +313,83 @@
     <section id="tab-home" class="section active">
       <div class="home-greeting">Welcome back, Amal. ✦</div>
       <div class="home-sub">What story is ready to be told today?</div>
-      <div class="stats-row">
-        <div class="stat-box"><span class="stat-num" id="stat-stories">0</span><div class="stat-label">Stories written</div></div>
-        <div class="stat-box"><span class="stat-num" id="stat-recipes">0</span><div class="stat-label">Recipes saved</div></div>
-        <div class="stat-box"><span class="stat-num" id="stat-chapters">0</span><div class="stat-label">Chapters touched</div></div>
-      </div>
-
-      <div class="home-recent-title">Recently added</div>
+      <div class="chapter-cards-grid" id="chapter-cards"></div>
+      <div class="home-recent-title" style="margin-top:1.5rem;">Recently added</div>
       <div id="home-recent"></div>
     </section>
 
-    <!-- CHILDHOOD -->
-    <section id="tab-childhood" class="section">
-      <div class="section-header">
-        <div class="section-title">🌿 Childhood</div>
-        <div class="section-hint">The places you grew up, the people who shaped you, the moments that stayed with you longest.</div>
-      </div>
-      <div id="prompts-childhood" class="prompts-grid"></div>
-      <button class="btn-new" onclick="openForm('childhood')">+ Add a memory</button>
-      <div id="stories-childhood" class="stories-list"></div>
+    <!-- PROMPTS PAGE -->
+    <section id="tab-prompts" class="section">
+      <div id="prompts-magazine"></div>
     </section>
 
-    <!-- FAMILY -->
-    <section id="tab-family" class="section">
+    <!-- STORIES PAGE -->
+    <section id="tab-stories" class="section">
       <div class="section-header">
-        <div class="section-title">👨‍👩‍👧 Family</div>
-        <div class="section-hint">The people who made you who you are — parents, grandparents, siblings, cousins, neighbors who felt like family.</div>
+        <div class="section-title">All Stories</div>
+        <div class="section-hint">Everything you've written, all in one place.</div>
       </div>
-      <div id="prompts-family" class="prompts-grid"></div>
-      <button class="btn-new" onclick="openForm('family')">+ Add a memory</button>
-      <div id="stories-family" class="stories-list"></div>
+      <div id="all-stories-list" class="stories-list"></div>
     </section>
 
-    <!-- PLACES -->
-    <section id="tab-places" class="section">
+    <!-- SETTINGS PAGE -->
+    <section id="tab-settings" class="section">
       <div class="section-header">
-        <div class="section-title">🗺️ Places</div>
-        <div class="section-hint">Every home you lived in, every city that changed you, every place that still lives in your heart.</div>
+        <div class="section-title">Settings</div>
       </div>
-      <div id="prompts-places" class="prompts-grid"></div>
-      <button class="btn-new" onclick="openForm('places')">+ Add a memory</button>
-      <div id="stories-places" class="stories-list"></div>
-    </section>
-
-    <!-- TRADITIONS -->
-    <section id="tab-traditions" class="section">
-      <div class="section-header">
-        <div class="section-title">🪔 Traditions & Celebrations</div>
-        <div class="section-hint">Eid mornings, weddings, holidays, the rituals your family kept that made ordinary days feel sacred.</div>
+      <div class="settings-list">
+        <div class="settings-item">
+          <div class="settings-label">Back up to Google Drive</div>
+          <div class="settings-sub">Saves all your stories to your Google account</div>
+          <button class="drive-btn" id="drive-btn" onclick="handleDriveClick()">
+            <span class="drive-dot"></span>
+            <span id="drive-label">Connect Drive</span>
+          </button>
+        </div>
+        <div class="settings-item">
+          <div class="settings-label">Restore from Drive</div>
+          <div class="settings-sub">Bring back your stories from a previous backup</div>
+          <button class="drive-btn" onclick="handleImportClick()">↓ Restore</button>
+        </div>
+        <div class="settings-item">
+          <div class="settings-label">Text size</div>
+          <div class="settings-sub">Make the text bigger or smaller</div>
+          <div class="font-pair" style="margin-top:0.5rem;">
+            <button onclick="adjustFont(-1)">A−</button>
+            <button onclick="adjustFont(1)">A+</button>
+          </div>
+        </div>
+        <div class="settings-item">
+          <div class="settings-label">Night mode</div>
+          <div class="settings-sub">Easier on the eyes in low light</div>
+          <button class="drive-btn" onclick="toggleNight()">Toggle</button>
+        </div>
       </div>
-      <div id="prompts-traditions" class="prompts-grid"></div>
-      <button class="btn-new" onclick="openForm('traditions')">+ Add a memory</button>
-      <div id="stories-traditions" class="stories-list"></div>
-    </section>
-
-    <!-- RECIPES -->
-    <section id="tab-recipes" class="section">
-      <div class="section-header">
-        <div class="section-title">🫕 Recipes & Food Memories</div>
-        <div class="section-hint">No measurements needed, Amal. Just the story of the dish — how it smelled, who taught you, when you made it, what it means.</div>
-      </div>
-      <div class="recipe-intro">Write your recipes the way you know them — a handful of this, cook until it smells right, the way your mother showed you. The story behind the dish is just as important as the dish itself.</div>
-      <div id="prompts-recipes" class="prompts-grid"></div>
-      <button class="btn-new" onclick="openForm('recipes')">+ Add a recipe</button>
-      <div id="stories-recipes" class="stories-list"></div>
-    </section>
-
-    <!-- ANYTHING -->
-    <section id="tab-anything" class="section">
-      <div class="section-header">
-        <div class="section-title">💬 Anything Else</div>
-        <div class="section-hint">Dreams you had, lessons you learned, things you want your grandchildren to know. If it doesn't fit anywhere else, it belongs here.</div>
-      </div>
-      <div id="prompts-anything" class="prompts-grid"></div>
-      <button class="btn-new" onclick="openForm('anything')">+ Write something</button>
-      <div id="stories-anything" class="stories-list"></div>
     </section>
 
   </main>
 
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
-    <button class="nav-action active" onclick="switchTab('home', document.querySelector('.tab'))">
+    <button class="nav-action active" id="nav-home" onclick="switchMainTab('home')">
       <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span>Home</span>
     </button>
-    <button class="nav-action" id="drive-footer-btn" onclick="handleDriveClick()">
-      <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-      <span id="drive-footer-label">Backup</span>
+    <button class="nav-action" id="nav-prompts" onclick="switchMainTab('prompts')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>Prompts</span>
     </button>
-    <button class="nav-action" onclick="handleImportClick()">
-      <svg viewBox="0 0 24 24"><polyline points="8 16 12 20 16 16"/><line x1="12" y1="12" x2="12" y2="20"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-      <span>Restore</span>
+    <button class="nav-action" id="nav-stories" onclick="switchMainTab('stories')">
+      <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Stories</span>
     </button>
-    <div class="nav-action">
-      <div class="font-pair">
-        <button onclick="adjustFont(-1)">A−</button>
-        <button onclick="adjustFont(1)">A+</button>
+    <button class="nav-action" id="nav-settings" onclick="switchMainTab('settings')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Settings</span>
+    </button>
+  </div>
+</div>
+
       </div>
       <span>Text</span>
     </div>
@@ -873,25 +895,22 @@ function printBook() {
 // ── RENDER ────────────────────────────────────────────────
 function renderAll() {
   renderHome();
-  ['childhood','family','places','traditions','recipes','anything'].forEach(cat => {
-    renderPrompts(cat);
-    renderStories(cat);
-  });
+  renderChapterCards();
 }
 
 function renderHome() {
-  document.getElementById('stat-stories').textContent = entries.length;
-  document.getElementById('stat-recipes').textContent = entries.filter(e => e.category === 'recipes').length;
-  document.getElementById('stat-chapters').textContent = new Set(entries.map(e => e.category)).size;
-
   const el = document.getElementById('home-recent');
   const recent = entries.slice(0, 3);
+  if (!el) return;
   if (recent.length === 0) {
     el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">✦</div><div class="empty-state-text">Your stories are waiting to be told, Amal.</div></div>`;
   } else {
     el.innerHTML = `<div class="stories-list">${recent.map(e => storyCardHTML(e)).join('')}</div>`;
   }
+  renderChapterCards();
 }
+
+
 
 function renderStories(category) {
   const el = document.getElementById('stories-' + category);
@@ -1021,6 +1040,7 @@ function toggleNight() {
 
 // ── INIT ──────────────────────────────────────────────────
 loadLocal();
+loadPromptState();
 const sf = localStorage.getItem('amal_fontscale');
 if (sf) { fontScale = parseInt(sf); const size = 18 + fontScale*2; document.documentElement.style.setProperty('--base-size', size+'px'); document.documentElement.style.fontSize = size+'px'; }
 if (localStorage.getItem('amal_night') === '1') document.body.classList.add('night');
