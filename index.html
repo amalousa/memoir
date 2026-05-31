@@ -925,7 +925,7 @@ function renderHome() {
   const recent = entries.slice(0, 3);
   if (!el) return;
   if (recent.length === 0) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">✦</div><div class="empty-state-text">Your stories are waiting to be told, Amal.</div></div>`;
+    el.innerHTML = `<div class="empty-state"><div class="empty-state-icon"><img src="./assets/images/sprout.svg" alt="" style="width:3rem;height:3rem;opacity:0.7;filter:brightness(0) invert(1);"></div><div class="empty-state-text">Your stories are waiting to be told, Amal.</div></div>`;
   } else {
     el.innerHTML = `<div class="stories-list">${recent.map(e => storyCardHTML(e)).join('')}</div>`;
   }
