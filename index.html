@@ -169,16 +169,16 @@
   .empty-state-text { font-family: var(--font-display); font-style: italic; font-size: 1.1rem; }
 
   /* ── READER ── */
-  #reader-overlay { display: none; position: fixed; inset: 0; background: var(--cream); z-index: 200; overflow-y: auto; padding: 2rem; animation: fadeIn 0.3s ease; }
+  #reader-overlay { display: none; position: fixed; inset: 0; background: #fdf6ee; z-index: 200; overflow-y: auto; padding: 2rem; animation: fadeIn 0.3s ease; }
   .reader-inner { max-width: 680px; margin: 0 auto; }
-  .reader-back { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--gold); background: none; border: none; font-family: var(--font-body); font-size: 0.95rem; cursor: pointer; margin-bottom: 2rem; padding: 0; }
+  .reader-back { display: inline-flex; align-items: center; gap: 0.4rem; color: #1e3a5f; background: none; border: none; font-family: var(--font-body); font-size: 0.95rem; cursor: pointer; margin-bottom: 2rem; padding: 0; }
   .reader-back:hover { text-decoration: underline; }
   .reader-tag { margin-bottom: 0.5rem; }
-  .reader-title { font-family: var(--font-display); font-size: clamp(1.8rem,5vw,2.6rem); font-weight: 600; line-height: 1.25; margin-bottom: 0.5rem; }
-  .reader-date { color: var(--ink-faint); font-size: 0.88rem; margin-bottom: 1.5rem; }
-  .reader-rule { border: none; border-top: 1px solid var(--border); margin-bottom: 2rem; }
-  .reader-body { font-size: 1.15rem; line-height: 2; color: var(--ink); white-space: pre-wrap; }
-  .reader-share-row { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); display: flex; gap: 0.8rem; flex-wrap: wrap; }
+  .reader-title { font-family: var(--font-display); font-size: clamp(1.8rem,5vw,2.6rem); font-weight: 600; line-height: 1.25; margin-bottom: 0.5rem; color: #1e3a5f; }
+  .reader-date { color: #8a9bbf; font-size: 0.88rem; margin-bottom: 1.5rem; }
+  .reader-rule { border: none; border-top: 1px solid #d4b896; margin-bottom: 2rem; }
+  .reader-body { font-size: 1.15rem; line-height: 2; color: #1e3a5f; white-space: pre-wrap; }
+  .reader-share-row { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #d4b896; display: flex; gap: 0.8rem; flex-wrap: wrap; }
 
   /* ── HOME ── */
   .home-greeting { font-family: var(--font-display); font-size: clamp(1.8rem,5vw,2.5rem); font-weight: 600; margin-bottom: 0.4rem; color: #fdf6ee; }
@@ -529,12 +529,12 @@ const PROMPTS = {
 };
 
 const CATEGORY_LABELS = {
-  childhood: '🌿 Childhood',
-  family: '👨‍👩‍👧 Family',
-  places: '🗺️ Places',
-  traditions: '🪔 Traditions',
-  recipes: '🫕 Recipe',
-  anything: '💬 Other',
+  childhood: '<img src="./assets/images/girl.svg" alt="" style="width:0.9rem;height:0.9rem;vertical-align:middle;margin-right:0.3rem;filter:brightness(0) saturate(0);"> Childhood',
+  family: '<img src="./assets/images/sun.svg" alt="" style="width:0.9rem;height:0.9rem;vertical-align:middle;margin-right:0.3rem;filter:brightness(0) saturate(0);"> Family',
+  places: '<img src="./assets/images/bird.svg" alt="" style="width:0.9rem;height:0.9rem;vertical-align:middle;margin-right:0.3rem;filter:brightness(0) saturate(0);"> Places',
+  traditions: '<img src="./assets/images/flower.svg" alt="" style="width:0.9rem;height:0.9rem;vertical-align:middle;margin-right:0.3rem;filter:brightness(0) saturate(0);"> Traditions',
+  recipes: '<img src="./assets/images/cherries.svg" alt="" style="width:0.9rem;height:0.9rem;vertical-align:middle;margin-right:0.3rem;filter:brightness(0) saturate(0);"> Recipe',
+  anything: '<img src="./assets/images/lips.svg" alt="" style="width:0.9rem;height:0.9rem;vertical-align:middle;margin-right:0.3rem;filter:brightness(0) saturate(0);"> Other',
 };
 
 // ── TOAST ─────────────────────────────────────────────────
@@ -831,7 +831,7 @@ function openReader(id) {
   const e = entries.find(e => e.id === id);
   if (!e) return;
   currentReaderId = id;
-  document.getElementById('reader-tag-label').textContent = CATEGORY_LABELS[e.category] || e.category;
+  document.getElementById('reader-tag-label').innerHTML = CATEGORY_LABELS[e.category] || e.category;
   document.getElementById('reader-title').textContent = e.title;
   document.getElementById('reader-date').textContent = 'Written ' + new Date(e.created).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
   document.getElementById('reader-body').textContent = e.body;
