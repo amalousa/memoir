@@ -635,6 +635,9 @@ function restoreFromFile() {
 function handleDriveClick() {
   if (driveToken) {
     syncToDrive();
+  } else if (driveFileId || driveFolderId) {
+    // Previously connected — try silent re-auth first (user gesture, so no popup block)
+    requestAccessToken(true);
   } else {
     signInWithGoogle();
   }
@@ -655,9 +658,9 @@ function initGoogleAuth() {
     },
   });
 
-  // Silently re-auth if previously connected
+  // Restore UI state if previously connected — actual token refresh happens on next user tap
   if (driveFileId || driveFolderId) {
-    requestAccessToken(true);
+    updateDriveUI(true);
   }
 }
 
