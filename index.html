@@ -363,16 +363,19 @@
           </div>
           <button class="settings-btn ghost" onclick="handleImportClick()">↓ Restore</button>
         </div>
-        <div class="settings-item" style="flex-direction:column;align-items:flex-start;gap:0.8rem;">
+        <div class="settings-item">
           <div class="settings-item-text">
             <div class="settings-label">Backup File</div>
             <div class="settings-sub">Save or reload your stories as a file</div>
           </div>
-          <div style="display:flex;gap:0.5rem;">
-            <button class="settings-btn ghost" onclick="downloadJSON()">↓ Save File</button>
-            <button class="settings-btn ghost" onclick="restoreFromFile()">↑ Load File</button>
+          <div style="display:flex;gap:0.5rem;flex-shrink:0;">
+            <button class="settings-btn ghost" onclick="downloadJSON()">↓ Save</button>
+            <button class="settings-btn ghost" onclick="restoreFromFile()">↑ Load</button>
           </div>
         </div>
+        <div class="settings-item">
+          <div class="settings-item-text">
+            <div class="settings-label">Text size</div>
             <div class="settings-sub">Make the text bigger or smaller</div>
           </div>
           <div class="font-pair">
