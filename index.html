@@ -768,6 +768,8 @@ function save() {
 
 // ── COVER ─────────────────────────────────────────────────
 function enterApp() {
+  const today = new Date().toISOString().slice(0, 10);
+  localStorage.setItem('amal_cover_seen', today);
   document.getElementById('cover').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   renderAll();
@@ -1242,6 +1244,7 @@ function switchMainTab(id) {
   if (section) section.classList.add('active');
   const navBtn = document.getElementById('nav-' + id);
   if (navBtn) navBtn.classList.add('active');
+  localStorage.setItem('amal_active_tab', id);
   if (id === 'prompts') renderMagazine();
   if (id === 'stories') renderAllStories();
 }
@@ -1356,6 +1359,17 @@ loadLocal();
 loadPromptState();
 const sf = localStorage.getItem('amal_fontscale');
 if (sf) { fontScale = parseInt(sf); const size = 18 + fontScale*2; document.documentElement.style.setProperty('--base-size', size+'px'); document.documentElement.style.fontSize = size+'px'; }
+
+// Cover: show once per day
+const today = new Date().toISOString().slice(0, 10);
+const coverSeen = localStorage.getItem('amal_cover_seen');
+if (coverSeen === today) {
+  document.getElementById('cover').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  renderAll();
+  const lastTab = localStorage.getItem('amal_active_tab') || 'home';
+  switchMainTab(lastTab);
+}
 
 
 
