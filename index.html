@@ -360,7 +360,14 @@
         </div>
         <div class="settings-item">
           <div class="settings-item-text">
-            <div class="settings-label">Text size</div>
+            <div class="settings-label">Backup & Restore File</div>
+            <div class="settings-sub">Save or reload your stories as a file on your device</div>
+          </div>
+          <div style="display:flex;gap:0.5rem;flex-shrink:0;">
+            <button class="settings-btn ghost" onclick="downloadJSON()">↓ Save File</button>
+            <button class="settings-btn ghost" onclick="restoreFromFile()">↑ Load File</button>
+          </div>
+        </div>
             <div class="settings-sub">Make the text bigger or smaller</div>
           </div>
           <div class="font-pair">
@@ -560,7 +567,48 @@ function saveLocal() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
 }
 
-// ── GOOGLE DRIVE ──────────────────────────────────────────
+// ── JSON FILE BACKUP / RESTORE ─────────────────────────────
+function downloadJSON() {
+  if (!entries.length) { showToast("No stories to save yet."); return; }
+  const date = new Date().toISOString().slice(0, 10);
+  const filename = `stories-${date}-${entries.length}stories.json`;
+  const blob = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast("Your stories have been saved to a file.");
+}
+
+function restoreFromFile() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json,application/json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = evt => {
+      try {
+        const imported = JSON.parse(evt.target.result);
+        if (!Array.isArray(imported) || !imported.length) { showToast("That file doesn't have any stories."); return; }
+        if (imported.length < entries.length) {
+          if (!confirm(`Heads up — this file only has ${imported.length} ${imported.length === 1 ? 'story' : 'stories'}, but you have ${entries.length} here. Restore anyway?`)) return;
+        }
+        // merge by id, keep most recently modified
+        const map = {};
+        [...entries, ...imported].forEach(e => {
+          if (!map[e.id] || e.modified > map[e.id].modified) map[e.id] = e;
+        });
+        entries = Object.values(map).sort((a, b) => b.modified - a.modified);
+        saveLocal();
+        renderAll();
+        showToast(`${imported.length} ${imported.length === 1 ? 'story' : 'stories'} restored.`);
+      } catch { showToast("Couldn't read that file. Please try again."); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
 function handleDriveClick() {
   if (driveToken) {
     syncToDrive();
