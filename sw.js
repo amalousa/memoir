@@ -1,6 +1,24 @@
-const DEV_MODE = true;
-const CACHE = 'memoir-v2';
-const ASSETS = ['./', './index.html', './manifest.json', './apple-touch-icon.png', './icon-192x192.png'];
+const DEV_MODE = false;
+const CACHE = 'memoir-v3';
+const ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './apple-touch-icon.png',
+  './icon-192x192.png',
+  './assets/images/a-decor.svg',
+  './assets/images/sprout.svg',
+  './assets/images/4star.svg',
+  './assets/images/bird.svg',
+  './assets/images/cherries.svg',
+  './assets/images/flower.svg',
+  './assets/images/girl.svg',
+  './assets/images/lips.svg',
+  './assets/images/pencil.svg',
+  './assets/images/sun.svg',
+  './assets/images/talk-bubble.svg',
+  './assets/images/home-divider.svg'
+];
 
 self.addEventListener('install', e => {
   if (!DEV_MODE) e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
