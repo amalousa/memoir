@@ -172,18 +172,19 @@
 
   /* ── ACCORDION ── */
   .entries-accordion { display: flex; flex-direction: column; gap: 0.8rem; }
-  .accordion-category { border-radius: 12px; overflow: hidden; background: var(--warm-white); border: 1px solid var(--border); }
-  .accordion-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.2rem; cursor: pointer; background: var(--warm-white); border: none; width: 100%; font-family: var(--font-ui); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s; }
-  .accordion-header:hover { background: rgba(0,0,0,0.02); }
+  .accordion-category { border-radius: 12px; overflow: hidden; }
+  .accordion-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.2rem; cursor: pointer; border: none; width: 100%; font-family: var(--font-ui); font-size: 0.85rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; transition: all 0.2s; color: #fdf6ee; border-radius: 12px; }
+  .accordion-header:hover { filter: brightness(1.1); }
   .accordion-header-title { display: flex; align-items: center; gap: 0.8rem; flex: 1; }
-  .accordion-color-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-  .accordion-count { margin-left: auto; font-size: 0.75rem; color: var(--ink-faint); font-weight: 400; letter-spacing: 0; text-transform: none; margin-right: 0.8rem; }
-  .accordion-icon { font-size: 0.8rem; color: var(--ink-faint); transition: transform 0.2s; }
+  .accordion-cat-icon { width: 1.1rem; height: 1.1rem; flex-shrink: 0; filter: brightness(0) invert(1) opacity(0.85); }
+  .accordion-count { margin-left: auto; font-size: 0.75rem; color: rgba(253,246,238,0.6); font-weight: 400; letter-spacing: 0; text-transform: none; margin-right: 0.8rem; }
+  .accordion-icon { font-size: 0.7rem; color: rgba(253,246,238,0.6); transition: transform 0.2s; }
   .accordion-header.expanded .accordion-icon { transform: rotate(180deg); }
-  .accordion-content { display: none; padding: 0 1.2rem 1.2rem; background: var(--warm-white); }
+  .accordion-header.expanded { border-radius: 12px 12px 0 0; }
+  .accordion-content { display: none; padding: 0 1.2rem 1.2rem; background: var(--warm-white); border-radius: 0 0 12px 12px; }
   .accordion-content.expanded { display: flex; flex-direction: column; gap: 1rem; }
-  .accordion-entry { background: rgba(0,0,0,0.02); border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s; }
-  .accordion-entry:hover { background: rgba(0,0,0,0.04); }
+  .accordion-entry { background: rgba(0,0,0,0.03); border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s; }
+  .accordion-entry:hover { background: rgba(0,0,0,0.06); }
 
   /* ── EMPTY ── */
   .empty-state { text-align: center; padding: 3rem 2rem; color: var(--ink-faint); }
@@ -1441,9 +1442,9 @@ function renderAllStories() {
     
     html += `
       <div class="accordion-category">
-        <button class="accordion-header" onclick="toggleAccordion(this)">
+        <button class="accordion-header" style="background:${ch.color};" onclick="toggleAccordion(this)">
           <div class="accordion-header-title">
-            <div class="accordion-color-dot" style="background:${ch.color};"></div>
+            <img src="${ch.emoji}" alt="" class="accordion-cat-icon">
             <span>${ch.label}</span>
           </div>
           <span class="accordion-count">${catEntries.length}</span>
