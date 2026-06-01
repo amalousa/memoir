@@ -640,42 +640,61 @@ function handleDriveClick() {
   }
 }
 
-function signInWithGoogle(silent = false) {
-  const client = google.accounts.oauth2.initTokenClient({
+let tokenClient = null;
+
+function initGoogleAuth() {
+  // One Tap — shows in-page prompt if user has previously signed in, no popup
+  google.accounts.id.initialize({
     client_id: CLIENT_ID,
-    scope: SCOPES,
-    prompt: silent ? '' : undefined,
-    callback: (resp) => {
-      if (resp.error) {
-        if (!silent) showToast('Could not connect to Google Drive');
-        return;
-      }
-      driveToken = resp.access_token;
-      updateDriveUI(true);
-      if (!silent) syncToDrive();
-      // Auto-refresh token every 45 minutes
-      setTimeout(() => signInWithGoogle(true), 45 * 60 * 1000);
+    auto_select: true,
+    callback: (credentialResponse) => {
+      // One Tap gave us an ID token — use it to get an access token silently
+      requestAccessToken(true);
     },
   });
-  client.requestAccessToken({ prompt: silent ? '' : 'select_account' });
+
+  // Only show One Tap prompt if previously connected
+  if (driveFileId || driveFolderId) {
+    google.accounts.id.prompt((notification) => {
+      if (notification.isSkippedMoment() || notification.isDismissedMoment()) {
+        // One Tap skipped — that's fine, user can tap Connect manually
+      }
+    });
+  }
+
+  // Pre-initialize token client for fast response on button tap
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: (resp) => {
+      if (resp.error) { showToast('Could not connect to Google Drive'); return; }
+      driveToken = resp.access_token;
+      updateDriveUI(true);
+      syncToDrive();
+      // Auto-refresh every 45 min
+      setTimeout(() => requestAccessToken(true), 45 * 60 * 1000);
+    },
+  });
+}
+
+function requestAccessToken(silent = false) {
+  if (!tokenClient) return;
+  tokenClient.requestAccessToken({ prompt: silent ? '' : 'select_account' });
+}
+
+function signInWithGoogle() {
+  if (!tokenClient) {
+    // GSI not loaded yet — shouldn't happen but handle gracefully
+    showToast('Google Sign-In is loading, please try again.');
+    return;
+  }
+  requestAccessToken(false);
 }
 
 function trySilentSignIn() {
-  if (!driveFileId && !driveFolderId) return; // Never connected before
-  try {
-    const client = google.accounts.oauth2.initTokenClient({
-      client_id: CLIENT_ID,
-      scope: SCOPES,
-      prompt: '',
-      callback: (resp) => {
-        if (resp.error || !resp.access_token) return;
-        driveToken = resp.access_token;
-        updateDriveUI(true);
-        setTimeout(() => signInWithGoogle(true), 45 * 60 * 1000);
-      },
-    });
-    client.requestAccessToken({ prompt: '' });
-  } catch(e) { /* silent fail */ }
+  if (!driveFileId && !driveFolderId) return;
+  if (!tokenClient) return;
+  requestAccessToken(true);
 }
 
 function updateDriveUI(connected) {
@@ -1136,7 +1155,9 @@ function handleImportClick() {
     importFromDrive();
   } else {
     // Sign in first then import
-    const client = google.accounts.oauth2.initTokenClient({
+    if (!tokenClient) { showToast('Google Sign-In is loading, please try again.'); return; }
+    const originalCallback = tokenClient._callback;
+    tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID,
       scope: SCOPES,
       callback: (resp) => {
@@ -1144,9 +1165,10 @@ function handleImportClick() {
         driveToken = resp.access_token;
         updateDriveUI(true);
         importFromDrive();
+        setTimeout(() => requestAccessToken(true), 45 * 60 * 1000);
       },
     });
-    client.requestAccessToken();
+    tokenClient.requestAccessToken({ prompt: 'select_account' });
   }
 }
 
@@ -1421,10 +1443,8 @@ document.getElementById('modal-overlay').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
 
-// Silent re-auth on load if previously connected
-window.addEventListener('load', () => {
-  setTimeout(trySilentSignIn, 1500); // Wait for GSI client to initialize
-});
+// Initialize Google Auth once GSI client is ready
+window.onGoogleLibraryLoad = initGoogleAuth;
 </script>
 </body>
 </html>
