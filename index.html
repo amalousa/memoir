@@ -335,7 +335,7 @@
     <!-- STORIES PAGE -->
     <section id="tab-stories" class="section">
       <div style="text-align:center;padding:1.5rem 1rem 1rem;">
-        <img src="./assets/images/a-decor.svg" alt="" width="80" height="80" style="margin-bottom:0.75rem;">
+        <img src="./assets/images/a-decor.svg" alt="" width="80" height="80" style="margin-bottom:0.75rem;cursor:pointer;" onclick="showCover()">
         <div style="font-family:var(--font-display);font-size:clamp(1.4rem,4vw,1.9rem);font-weight:600;color:#fdf6ee;margin-bottom:0.75rem;">Amal Writes</div>
         <div style="width:80px;height:2px;background:linear-gradient(90deg,transparent,#5bbcbc,transparent);margin:0 auto;"></div>
       </div>
@@ -821,6 +821,13 @@ function enterApp() {
   document.getElementById('app').style.display = 'block';
   document.getElementById('bottom-nav').style.display = 'flex';
   renderAll();
+}
+
+function showCover() {
+  localStorage.removeItem('amal_cover_seen');
+  document.getElementById('cover').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('bottom-nav').style.display = 'none';
 }
 
 // ── TABS ──────────────────────────────────────────────────
