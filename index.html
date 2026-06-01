@@ -315,8 +315,12 @@
 
     <!-- HOME -->
     <section id="tab-home" class="section active">
-      <div class="home-greeting">Home</div>
-      <div style="font-family:var(--font-ui);font-size:0.78rem;text-transform:uppercase;letter-spacing:4px;color:rgba(253,246,238,0.6);margin-bottom:1rem;">Categories</div>
+      <div style="text-align:center;padding:1.5rem 1rem 1rem;">
+        <img src="./assets/images/a-decor.svg" alt="" width="80" height="80" style="margin-bottom:0.75rem;cursor:pointer;" onclick="showCover()">
+        <div style="font-family:var(--font-display);font-size:clamp(1.4rem,4vw,1.9rem);font-weight:600;color:#fdf6ee;margin-bottom:0.75rem;">Amal Writes</div>
+        <div style="width:80px;height:2px;background:linear-gradient(90deg,transparent,#5bbcbc,transparent);margin:0 auto;"></div>
+      </div>
+      <div style="font-family:var(--font-ui);font-size:0.78rem;text-transform:uppercase;letter-spacing:4px;color:rgba(253,246,238,0.6);margin-bottom:1rem;margin-top:1.5rem;">Categories</div>
       <div class="chapter-cards-grid" id="chapter-cards"></div>
       <div style="text-align:center;margin:2.5rem 0 2rem;">
         <div class="cover-rule"></div>
@@ -334,11 +338,6 @@
 
     <!-- STORIES PAGE -->
     <section id="tab-stories" class="section">
-      <div style="text-align:center;padding:1.5rem 1rem 1rem;">
-        <img src="./assets/images/a-decor.svg" alt="" width="80" height="80" style="margin-bottom:0.75rem;cursor:pointer;" onclick="showCover()">
-        <div style="font-family:var(--font-display);font-size:clamp(1.4rem,4vw,1.9rem);font-weight:600;color:#fdf6ee;margin-bottom:0.75rem;">Amal Writes</div>
-        <div style="width:80px;height:2px;background:linear-gradient(90deg,transparent,#5bbcbc,transparent);margin:0 auto;"></div>
-      </div>
       <div class="section-header" style="margin-top:1.5rem;">
         <div class="section-title" style="color:#fdf6ee;">All Entries</div>
         <div class="section-hint" style="color:rgba(253,246,238,0.6);">Everything you've written, all in one place. <span id="stories-count"></span></div>
