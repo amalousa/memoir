@@ -240,7 +240,6 @@
   .magazine-chapter { margin-bottom: 0; }
   .magazine-header { padding: 1.5rem 1.5rem 1rem; display: flex; align-items: center; justify-content: space-between; }
   .magazine-chapter-title { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; color: #fdf6ee; }
-  .magazine-chapter-hint { font-family: var(--font-body); font-style: italic; font-size: 0.9rem; color: rgba(255,255,255,0.65); margin-top: 0.2rem; }
   .magazine-add-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fdf6ee; font-family: var(--font-ui); font-size: 0.72rem; letter-spacing: 0.07em; text-transform: uppercase; padding: 0.4rem 0.9rem; border-radius: 20px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
   .magazine-add-btn:hover { background: rgba(255,255,255,0.25); }
   .magazine-prompts { padding: 0 1rem 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
@@ -324,7 +323,7 @@
     <!-- PROMPTS PAGE -->
     <section id="tab-prompts" class="section">
       <div class="home-greeting">Writing prompts</div>
-      <div class="home-sub" style="margin-bottom:1.5rem;">Choose a prompt or just press + Write to start anything.</div>
+      <div style="font-family:'Noto Sans Symbols 2',var(--font-ui);font-size:0.78rem;text-transform:uppercase;letter-spacing:4px;color:rgba(253,246,238,0.6);margin-bottom:1.5rem;">Choose a prompt or just press + to start writing anything</div>
       <div id="prompts-magazine"></div>
     </section>
 
@@ -1308,10 +1307,7 @@ function renderMagazine() {
     const allGone = prompts.every((_, i) => { const s = promptState[getPromptKey(ch.id, i)]; return s === 'removed' || s === 'skipped'; });
     return `<div class="magazine-chapter" id="mag-chapter-${ch.id}" style="background:${ch.color};">
       <div class="magazine-header">
-        <div>
-          <div class="magazine-chapter-title"><img src="${ch.emoji}" alt="" style="width:1.4rem;height:1.4rem;vertical-align:middle;filter:brightness(0) invert(1);opacity:0.9;margin-right:0.4rem;"> ${ch.label}</div>
-          <div class="magazine-chapter-hint">${ch.hint}</div>
-        </div>
+        <div class="magazine-chapter-title"><img src="${ch.emoji}" alt="" style="width:1.4rem;height:1.4rem;vertical-align:middle;filter:brightness(0) invert(1);opacity:0.9;margin-right:0.4rem;"> ${ch.label}</div>
         <button class="magazine-add-btn" onclick="openForm('${ch.id}')">+ Add</button>
       </div>
       <div class="magazine-prompts">${allGone ? '<p style="color:rgba(255,255,255,0.5);font-style:italic;font-size:0.9rem;">All prompts hidden — tap + Add to write freely.</p>' : promptsHTML}</div>
