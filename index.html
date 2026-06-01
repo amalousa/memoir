@@ -172,7 +172,7 @@
 
   /* ── ENTRY FILTERS ── */
   .entries-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem 0 1.2rem; }
-  .filter-pill { padding: 0.45rem 1rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: rgba(253,246,238,0.7); font-family: var(--font-ui); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .filter-pill { padding: 0.4rem 0.75rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: rgba(253,246,238,0.7); font-family: var(--font-ui); font-size: 0.68rem; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
   .filter-pill:hover { background: rgba(255,255,255,0.15); color: #fdf6ee; }
   .filter-pill.active { background: #5bbcbc; color: #3d1a4a; border-color: #5bbcbc; font-weight: 500; }
 
@@ -1041,7 +1041,7 @@ function printBook() {
   if (entries.length === 0) { showToast('No entries to print yet, Amal!'); return; }
 
   const categories = ['childhood','family','places','traditions','recipes','poetry','fiction','anything'];
-  const catNames = { childhood:'Childhood', family:'Family', places:'Places', traditions:'Traditions & Celebrations', recipes:'Recipes & Food Memories', poetry:'Poetry', fiction:'Fiction', anything:'Other Memories' };
+  const catNames = { childhood:'Childhood', family:'Family', places:'Places', traditions:'Traditions & Celebrations', recipes:'Recipes & Food Memories', poetry:'Poetry', fiction:'Fiction', anything:'Other' };
 
   let html = `<div style="text-align:center;padding:4rem 2rem;page-break-after:always;">
     <h1 style="font-family:Georgia,serif;font-size:36pt;margin-bottom:1rem;">Amal's Book of Stories</h1>
@@ -1280,7 +1280,7 @@ const CHAPTERS = [
   { id: 'recipes', label: 'Recipes', emoji: './assets/images/cherries.svg', color: '#4e723b', hint: 'No measurements needed — just the story.' },
   { id: 'poetry', label: 'Poetry', emoji: './assets/images/lips.svg', color: '#5c2d6e', hint: 'In your own words, in any form.' },
   { id: 'fiction', label: 'Fiction', emoji: './assets/images/talk-bubble.svg', color: '#c03c5a', hint: 'Stories you imagine.' },
-  { id: 'anything', label: 'Anything Else', emoji: './assets/images/pencil.svg', color: '#15494c', hint: "If it doesn't fit anywhere else, it belongs here." },
+  { id: 'anything', label: 'Other', emoji: './assets/images/pencil.svg', color: '#15494c', hint: "If it doesn't fit anywhere else, it belongs here." },
 ];
 
 // ── PROMPT STATE ──────────────────────────────────────────
