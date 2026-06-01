@@ -287,6 +287,23 @@
   /* ── MAIN NAV ACTIVE ── */
   .nav-action.active { color: #5bbcbc; }
 
+  /* ── GUIDE MODAL ── */
+  #guide-overlay { position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:200;display:none;align-items:center;justify-content:center;padding:1.5rem; }
+  #guide-overlay.visible { display:flex; }
+  .guide-card { background:var(--warm-white);border-radius:16px;max-width:380px;width:100%;padding:2rem 1.8rem;text-align:center;position:relative; }
+  .guide-icon { font-size:2.2rem;margin-bottom:1rem; }
+  .guide-title { font-family:var(--font-display);font-size:1.3rem;font-weight:600;color:#3d1a4a;margin-bottom:0.75rem; }
+  .guide-text { font-family:var(--font-body);font-size:0.95rem;color:#4a2e1a;line-height:1.6;margin-bottom:1.5rem; }
+  .guide-dots { display:flex;gap:0.5rem;justify-content:center;margin-bottom:1.2rem; }
+  .guide-dot { width:8px;height:8px;border-radius:50%;background:rgba(61,26,74,0.2);transition:all 0.2s; }
+  .guide-dot.active { background:#5bbcbc;width:20px;border-radius:4px; }
+  .guide-nav { display:flex;gap:0.8rem;justify-content:center; }
+  .guide-btn { font-family:var(--font-ui);font-size:0.78rem;letter-spacing:0.06em;text-transform:uppercase;padding:0.5rem 1.4rem;border-radius:20px;cursor:pointer;transition:all 0.2s; }
+  .guide-btn.secondary { background:none;border:1px solid rgba(61,26,74,0.3);color:#3d1a4a; }
+  .guide-btn.secondary:hover { border-color:#3d1a4a; }
+  .guide-btn.primary { background:#5bbcbc;border:1px solid #5bbcbc;color:#3d1a4a; }
+  .guide-btn.primary:hover { filter:brightness(1.08); }
+
 </style>
 </head>
 <body>
@@ -304,6 +321,18 @@
 </div>
 
 <!-- APP -->
+
+<!-- GUIDE -->
+<div id="guide-overlay">
+  <div class="guide-card">
+    <div class="guide-icon" id="guide-icon"></div>
+    <div class="guide-title" id="guide-title"></div>
+    <div class="guide-text" id="guide-text"></div>
+    <div class="guide-dots" id="guide-dots"></div>
+    <div class="guide-nav" id="guide-nav"></div>
+  </div>
+</div>
+
 <div id="app">
   <header>
     <div style="display:flex;align-items:center;gap:0.5rem;">
@@ -394,6 +423,13 @@
             <button onclick="adjustFont(1)">A+</button>
           </div>
         </div>
+        <div class="settings-item">
+          <div class="settings-item-text">
+            <div class="settings-label">How to Use</div>
+            <div class="settings-sub">A quick walkthrough of the app</div>
+          </div>
+          <button class="settings-btn ghost" onclick="showGuide(0)">Show Guide</button>
+        </div>
 
       </div>
     </section>
@@ -451,13 +487,15 @@
     <label class="form-label" for="entry-title">Give it a title</label>
     <input class="form-input" type="text" id="entry-title" placeholder="your title here">
 
+    <label class="form-label" for="entry-category">Category</label>
+    <select class="form-input" id="entry-category" style="appearance:auto;-webkit-appearance:menulist;cursor:pointer;"></select>
+
     <label class="form-label">Tell the story</label>
     <div id="modal-prompt-label" style="display:none; font-family:'Noto Sans Symbols 2',sans-serif; font-size:0.82rem; letter-spacing:0; color:#5bbcbc; font-style:italic; margin-bottom:0.5rem;"></div>
     <div class="textarea-wrap">
       <textarea class="form-textarea" id="entry-body" placeholder="Start wherever feels right…"></textarea>
     </div>
 
-    <input type="hidden" id="entry-category">
     <input type="hidden" id="entry-id">
     <input type="hidden" id="entry-prompt">
 
@@ -827,6 +865,9 @@ function enterApp() {
   document.getElementById('app').style.display = 'block';
   document.getElementById('bottom-nav').style.display = 'flex';
   renderAll();
+  if (!localStorage.getItem('amal_guide_seen')) {
+    setTimeout(() => showGuide(0), 400);
+  }
 }
 
 function showCover() {
@@ -834,6 +875,75 @@ function showCover() {
   document.getElementById('cover').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
   document.getElementById('bottom-nav').style.display = 'none';
+}
+
+// ── GUIDE ──────────────────────────────────────────────────
+const GUIDE_STEPS = [
+  {
+    icon: '🌱',
+    title: 'Welcome to Your Writing Space',
+    text: 'This app is yours. Write stories, recipes, poems, memories, fiction, or anything that comes to mind. There are no rules here.'
+  },
+  {
+    icon: '✏️',
+    title: 'Start Writing',
+    text: 'Tap the + button in the top corner anytime to start a new entry. Give it a title, choose a category, and write as much or as little as you like.'
+  },
+  {
+    icon: '✨',
+    title: 'Browse Prompts',
+    text: 'Not sure what to write? Tap Prompts at the bottom for inspiration. Tap Write next to any prompt to begin.'
+  },
+  {
+    icon: '📖',
+    title: 'Find Your Entries',
+    text: 'Everything you write is saved on this device. Tap Entries at the bottom to see all your writing. You can filter by category, read, edit, or share.'
+  },
+  {
+    icon: '☁️',
+    title: 'Keep Your Writing Safe',
+    text: 'Go to Settings and connect Google Drive. Your entries will be backed up automatically. You can also save a file to your device from Settings.'
+  }
+];
+
+let guideStep = 0;
+
+function showGuide(step) {
+  guideStep = step || 0;
+  const overlay = document.getElementById('guide-overlay');
+  overlay.classList.add('visible');
+  renderGuideStep();
+}
+
+function closeGuide() {
+  document.getElementById('guide-overlay').classList.remove('visible');
+  localStorage.setItem('amal_guide_seen', 'true');
+}
+
+function renderGuideStep() {
+  const s = GUIDE_STEPS[guideStep];
+  document.getElementById('guide-icon').textContent = s.icon;
+  document.getElementById('guide-title').textContent = s.title;
+  document.getElementById('guide-text').textContent = s.text;
+
+  // Dots
+  const dotsEl = document.getElementById('guide-dots');
+  dotsEl.innerHTML = GUIDE_STEPS.map((_, i) =>
+    `<div class="guide-dot ${i === guideStep ? 'active' : ''}"></div>`
+  ).join('');
+
+  // Nav buttons
+  const navEl = document.getElementById('guide-nav');
+  let nav = '';
+  if (guideStep > 0) {
+    nav += `<button class="guide-btn secondary" onclick="guideStep--;renderGuideStep()">Back</button>`;
+  }
+  if (guideStep < GUIDE_STEPS.length - 1) {
+    nav += `<button class="guide-btn primary" onclick="guideStep++;renderGuideStep()">Next</button>`;
+  } else {
+    nav += `<button class="guide-btn primary" onclick="closeGuide()">Start Writing</button>`;
+  }
+  navEl.innerHTML = nav;
 }
 
 // ── TABS ──────────────────────────────────────────────────
@@ -886,7 +996,8 @@ function openForm(category, id = null) {
     : (isRecipe ? 'No measurements needed — just describe it the way you know it.'
                 : 'Write as much or as little as you like. You can always come back.');
 
-  document.getElementById('entry-category').value = category;
+  const catSelect = document.getElementById('entry-category');
+  catSelect.innerHTML = CHAPTERS.map(ch => `<option value="${ch.id}" ${ch.id === category ? 'selected' : ''}>${ch.label}</option>`).join('');
   document.getElementById('entry-id').value = id || '';
   document.getElementById('entry-title').value = '';
   document.getElementById('entry-body').value = '';
