@@ -286,10 +286,10 @@
     <img src="./assets/images/a-decor.svg" alt="" width="140" height="140">
   </div>
   <h1 class="cover-title">Amal's Book<br>of Stories</h1>
-  <p class="cover-subtitle">A lifetime of memories, told in her own words</p>
+  <p class="cover-subtitle">Words are timeless. You should utter them or write them with a knowledge of their timelessness. – Khalil Gibran</p>
   <div class="cover-rule"></div>
   <p class="cover-text">
-    This is your space — for the stories only you can tell. Take your time. There are no wrong answers here.
+    This is your space for the stories only you can tell.
   </p>
   <button class="btn-primary" onclick="enterApp()">Begin <img src="./assets/images/sprout.svg" alt="" style="width:1em;height:1em;vertical-align:middle;filter:brightness(0) saturate(100%) invert(8%) sepia(40%) saturate(800%) hue-rotate(260deg);"></button>
 </div>
@@ -298,7 +298,7 @@
 <div id="app">
   <header>
     <div style="display:flex;align-items:center;gap:0.5rem;">
-      <img src="./assets/images/a-decor.svg" alt="" width="36" height="36">
+      <img src="./assets/images/sprout.svg" alt="" width="28" height="28" style="filter:brightness(0) saturate(100%) invert(60%) sepia(60%) saturate(600%) hue-rotate(5deg) brightness(1.1);opacity:0.95;">
       <div class="header-title">Amal's Stories</div>
     </div>
 
@@ -326,7 +326,12 @@
 
     <!-- STORIES PAGE -->
     <section id="tab-stories" class="section">
-      <div class="section-header">
+      <div style="text-align:center;padding:1.5rem 1rem 1rem;">
+        <img src="./assets/images/a-decor.svg" alt="" width="80" height="80" style="margin-bottom:0.75rem;">
+        <div style="font-family:var(--font-display);font-size:clamp(1.4rem,4vw,1.9rem);font-weight:600;color:#fdf6ee;margin-bottom:0.75rem;">Amal's Stories</div>
+        <div style="width:80px;height:2px;background:linear-gradient(90deg,transparent,#5bbcbc,transparent);margin:0 auto;"></div>
+      </div>
+      <div class="section-header" style="margin-top:1.5rem;">
         <div class="section-title" style="color:#fdf6ee;">All Stories</div>
         <div class="section-hint" style="color:rgba(253,246,238,0.6);">Everything you've written, all in one place. <span id="stories-count"></span></div>
       </div>
