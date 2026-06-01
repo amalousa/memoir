@@ -171,9 +171,8 @@
   .btn-sm.danger:hover { border-color: var(--terracotta); color: var(--terracotta); }
 
   /* ── ENTRY FILTERS ── */
-  .entries-filters { display: flex; gap: 0.5rem; overflow-x: auto; scrollbar-width: none; padding: 0.5rem 0 1.2rem; -webkit-overflow-scrolling: touch; }
-  .entries-filters::-webkit-scrollbar { display: none; }
-  .filter-pill { padding: 0.45rem 1rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: rgba(253,246,238,0.7); font-family: var(--font-ui); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
+  .entries-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem 0 1.2rem; }
+  .filter-pill { padding: 0.45rem 1rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: rgba(253,246,238,0.7); font-family: var(--font-ui); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
   .filter-pill:hover { background: rgba(255,255,255,0.15); color: #fdf6ee; }
   .filter-pill.active { background: #5bbcbc; color: #3d1a4a; border-color: #5bbcbc; font-weight: 500; }
 
