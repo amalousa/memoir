@@ -546,6 +546,12 @@ const PROMPTS = {
     { emoji: './assets/images/4star.svg', text: 'What advice would you give your younger self?' },
     { emoji: './assets/images/4star.svg', text: 'Something you want people to understand about where you come from.' },
   ],
+  poetry: [
+    { emoji: './assets/images/4star.svg', text: 'Do you have a favorite poem or poet?' },
+  ],
+  fiction: [
+    { emoji: './assets/images/4star.svg', text: 'Have you ever written or wanted to write a fictional story?' },
+  ],
 };
 
 const CATEGORY_LABELS = {
@@ -554,6 +560,8 @@ const CATEGORY_LABELS = {
   places: '<img src="./assets/images/bird.svg" alt="" style="width:0.9rem;height:0.9rem;vertical-align:middle;margin-right:0.3rem;filter:brightness(0) saturate(0);"> Places',
   traditions: '<img src="./assets/images/flower.svg" alt="" style="width:0.9rem;height:0.9rem;vertical-align:middle;margin-right:0.3rem;filter:brightness(0) saturate(0);"> Traditions',
   recipes: '<img src="./assets/images/cherries.svg" alt="" style="width:0.9rem;height:0.9rem;vertical-align:middle;margin-right:0.3rem;filter:brightness(0) saturate(0);"> Recipe',
+  poetry: '<img src="./assets/images/pencil.svg" alt="" style="width:0.9rem;height:0.9rem;vertical-align:middle;margin-right:0.3rem;filter:brightness(0) saturate(0);"> Poetry',
+  fiction: '<img src="./assets/images/talk-bubble.svg" alt="" style="width:0.9rem;height:0.9rem;vertical-align:middle;margin-right:0.3rem;filter:brightness(0) saturate(0);"> Fiction',
   anything: '<img src="./assets/images/lips.svg" alt="" style="width:0.9rem;height:0.9rem;vertical-align:middle;margin-right:0.3rem;filter:brightness(0) saturate(0);"> Other',
 };
 
@@ -986,8 +994,8 @@ function shareToFacebook() {
 function printBook() {
   if (entries.length === 0) { showToast('No stories to print yet, Amal!'); return; }
 
-  const categories = ['childhood','family','places','traditions','recipes','anything'];
-  const catNames = { childhood:'Childhood', family:'Family', places:'Places', traditions:'Traditions & Celebrations', recipes:'Recipes & Food Memories', anything:'Other Memories' };
+  const categories = ['childhood','family','places','traditions','recipes','poetry','fiction','anything'];
+  const catNames = { childhood:'Childhood', family:'Family', places:'Places', traditions:'Traditions & Celebrations', recipes:'Recipes & Food Memories', poetry:'Poetry', fiction:'Fiction', anything:'Other Memories' };
 
   let html = `<div style="text-align:center;padding:4rem 2rem;page-break-after:always;">
     <h1 style="font-family:Georgia,serif;font-size:36pt;margin-bottom:1rem;">Amal's Book of Stories</h1>
@@ -1225,6 +1233,8 @@ const CHAPTERS = [
   { id: 'places', label: 'Places', emoji: './assets/images/bird.svg', color: '#1e3a5f', hint: 'Every home, every city that changed you.' },
   { id: 'traditions', label: 'Traditions', emoji: './assets/images/flower.svg', color: '#6b1e36', hint: 'The rituals that made ordinary days sacred.' },
   { id: 'recipes', label: 'Recipes', emoji: './assets/images/cherries.svg', color: '#3d1a4a', hint: 'No measurements needed — just the story.' },
+  { id: 'poetry', label: 'Poetry', emoji: './assets/images/pencil.svg', color: '#5c2d6e', hint: 'In your own words, in any form.' },
+  { id: 'fiction', label: 'Fiction', emoji: './assets/images/talk-bubble.svg', color: '#4a7c6f', hint: 'Stories you imagine.' },
   { id: 'anything', label: 'Anything Else', emoji: './assets/images/lips.svg', color: '#1a5276', hint: "If it doesn't fit anywhere else, it belongs here." },
 ];
 
