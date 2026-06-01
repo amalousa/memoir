@@ -314,10 +314,22 @@
     <img src="./assets/images/a-decor.svg" alt="" width="140" height="140">
   </div>
   <h1 class="cover-title">Amal Writes</h1>
-  <p class="cover-subtitle">Words are timeless. You should utter them or write them with a knowledge of their timelessness. – Khalil Gibran</p>
+  <p class="cover-subtitle" style="font-size:0.95rem;line-height:1.7;max-width:340px;">Dear Amal! I know how much you want to write, so here is a place built just for you by your favorite daughter-in-law. It's still growing, and we'll shape it together until it's just right for you to write. I love you — happy birthday and happy writing!</p>
+  <p style="font-family:var(--font-body);color:rgba(253,246,238,0.85);font-size:0.95rem;margin-top:0.5rem;font-style:italic;">XOXO, Andrea</p>
   <div class="cover-rule"></div>
 
   <button class="btn-primary" onclick="enterApp()">Begin <img src="./assets/images/sprout.svg" alt="" style="width:1em;height:1em;vertical-align:middle;filter:brightness(0) saturate(100%) invert(8%) sepia(40%) saturate(800%) hue-rotate(260deg);"></button>
+</div>
+
+<!-- BIRTHDAY -->
+<div id="birthday-overlay" style="display:none;position:fixed;inset:0;z-index:500;background:#471041;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;">
+  <canvas id="confetti-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;"></canvas>
+  <div style="position:relative;z-index:1;text-align:center;padding:2rem;">
+    <div style="font-size:3rem;margin-bottom:1rem;">🎂</div>
+    <div style="font-family:var(--font-display);font-size:clamp(2rem,8vw,3.5rem);font-weight:700;color:#e8a83a;line-height:1.2;margin-bottom:0.5rem;">HAPPY BIRTHDAY,</div>
+    <div style="font-family:var(--font-display);font-size:clamp(2.5rem,10vw,4.5rem);font-weight:700;color:#5bbcbc;line-height:1.1;margin-bottom:1.5rem;">AMAL!</div>
+    <div style="font-family:var(--font-body);color:rgba(253,246,238,0.6);font-size:0.85rem;letter-spacing:0.1em;">TAP TO CONTINUE</div>
+  </div>
 </div>
 
 <!-- APP -->
@@ -429,6 +441,13 @@
             <div class="settings-sub">A quick walkthrough of the app</div>
           </div>
           <button class="settings-btn ghost" onclick="showGuide(0)">Show Guide</button>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-text">
+            <div class="settings-label">Birthday Message</div>
+            <div class="settings-sub">Replay your birthday surprise</div>
+          </div>
+          <button class="settings-btn ghost" onclick="showBirthdayFromSettings()">🎂 Replay</button>
         </div>
 
       </div>
@@ -862,12 +881,69 @@ function enterApp() {
   const today = new Date().toISOString().slice(0, 10);
   localStorage.setItem('amal_cover_seen', today);
   document.getElementById('cover').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  document.getElementById('bottom-nav').style.display = 'flex';
-  renderAll();
-  if (!localStorage.getItem('amal_guide_seen')) {
-    setTimeout(() => showGuide(0), 400);
+  showBirthday();
+}
+
+function showBirthday() {
+  const overlay = document.getElementById('birthday-overlay');
+  overlay.style.display = 'flex';
+  launchConfetti();
+  overlay.onclick = function() {
+    overlay.style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('bottom-nav').style.display = 'flex';
+    renderAll();
+    if (!localStorage.getItem('amal_guide_seen')) {
+      setTimeout(() => showGuide(0), 400);
+    }
+  };
+}
+
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const colors = ['#e8a83a','#5bbcbc','#a0366e','#d4882a','#5c2d6e','#c0392b','#4a7c6f','#fdf6ee','#4a8ab5'];
+  const pieces = [];
+
+  for (let i = 0; i < 150; i++) {
+    pieces.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      w: Math.random() * 10 + 5,
+      h: Math.random() * 6 + 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vy: Math.random() * 3 + 2,
+      vx: Math.random() * 2 - 1,
+      rot: Math.random() * 360,
+      rv: Math.random() * 6 - 3
+    });
   }
+
+  let frames = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+      p.y += p.vy;
+      p.x += p.vx;
+      p.rot += p.rv;
+      if (p.y > canvas.height + 20) {
+        p.y = -10;
+        p.x = Math.random() * canvas.width;
+      }
+    });
+    frames++;
+    if (frames < 300) requestAnimationFrame(draw);
+  }
+  draw();
 }
 
 function showCover() {
@@ -944,6 +1020,15 @@ function renderGuideStep() {
     nav += `<button class="guide-btn primary" onclick="closeGuide()">Start Writing</button>`;
   }
   navEl.innerHTML = nav;
+}
+
+function showBirthdayFromSettings() {
+  const overlay = document.getElementById('birthday-overlay');
+  overlay.style.display = 'flex';
+  launchConfetti();
+  overlay.onclick = function() {
+    overlay.style.display = 'none';
+  };
 }
 
 // ── TABS ──────────────────────────────────────────────────
