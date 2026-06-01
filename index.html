@@ -355,7 +355,7 @@
         <div class="settings-item">
           <div class="settings-item-text">
             <div class="settings-label">Save to Drive</div>
-            <div class="settings-sub" id="last-backup-text">Saves all your stories to your Google account</div>
+            <div class="settings-sub" id="last-backup-text">Saves all your entries to your Google account</div>
           </div>
           <button class="settings-btn" id="drive-btn" onclick="handleDriveClick()">
             <span id="drive-label">Connect Drive</span>
@@ -597,7 +597,7 @@ function saveLocal() {
 
 // ── JSON FILE BACKUP / RESTORE ─────────────────────────────
 function downloadJSON() {
-  if (!entries.length) { showToast("No stories to save yet."); return; }
+  if (!entries.length) { showToast("No entries to save yet."); return; }
   const date = new Date().toISOString().slice(0, 10);
   const filename = `stories-${date}-${entries.length}stories.json`;
   const json = JSON.stringify(entries, null, 2);
@@ -610,7 +610,7 @@ function downloadJSON() {
   a.click();
   document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 2000);
-  setTimeout(() => showToast("Your stories have been saved to a file."), 800);
+  setTimeout(() => showToast("Your entries have been saved to a file."), 800);
 }
 
 function restoreFromFile() {
@@ -623,9 +623,9 @@ function restoreFromFile() {
     reader.onload = evt => {
       try {
         const imported = JSON.parse(evt.target.result);
-        if (!Array.isArray(imported) || !imported.length) { showToast("That file doesn't have any stories."); return; }
+        if (!Array.isArray(imported) || !imported.length) { showToast("That file doesn't have any entries."); return; }
         if (imported.length < entries.length) {
-          if (!confirm(`Heads up — this file only has ${imported.length} ${imported.length === 1 ? 'story' : 'stories'}, but you have ${entries.length} here. Restore anyway?`)) return;
+          if (!confirm(`Heads up — this file only has ${imported.length} ${imported.length === 1 ? 'entry' : 'entries'}, but you have ${entries.length} here. Restore anyway?`)) return;
         }
         // merge by id, keep most recently modified
         const map = {};
@@ -635,7 +635,7 @@ function restoreFromFile() {
         entries = Object.values(map).sort((a, b) => b.modified - a.modified);
         saveLocal();
         renderAll();
-        showToast(`${imported.length} ${imported.length === 1 ? 'story' : 'stories'} restored.`);
+        showToast(`${imported.length} ${imported.length === 1 ? 'entry' : 'entries'} restored.`);
       } catch { showToast("Couldn't read that file. Please try again."); }
     };
     reader.readAsText(file);
@@ -701,13 +701,13 @@ async function syncToDrive(silent = false) {
 
   // Never backup 0 stories
   if (entries.length === 0) {
-    if (!silent) showToast("Nothing to save yet! Write some stories first.");
+    if (!silent) showToast("Nothing to save yet! Write some entries first.");
     return;
   }
 
   // Confirm with user unless silent (auto-backup)
   if (!silent) {
-    const ok = confirm(`You have ${entries.length} ${entries.length === 1 ? 'story' : 'stories'}. Save them to Google Drive now?`);
+    const ok = confirm(`You have ${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}. Save them to Google Drive now?`);
     if (!ok) return;
   }
 
@@ -742,7 +742,7 @@ async function syncToDrive(silent = false) {
 
     const date = new Date().toISOString().slice(0, 10);
     const count = entries.length;
-    const fileName = `stories-${date}-${count}${count === 1 ? 'story' : 'stories'}.json`;
+    const fileName = `stories-${date}-${count}${count === 1 ? 'entry' : 'entries'}.json`;
 
     if (driveFileId) {
       // Update existing file content
@@ -800,9 +800,9 @@ async function syncToDrive(silent = false) {
     localStorage.setItem('amal_last_backup', JSON.stringify(backupMeta));
     updateDriveUI(true);
     updateLastBackupText();
-    showToast(`Done! Your ${entries.length} ${entries.length === 1 ? 'story' : 'stories'} are safely saved.`);
+    showToast(`Done! Your ${entries.length} ${entries.length === 1 ? 'entry' : 'entries'} are safely saved.`);
   } catch(e) {
-    showToast("Couldn't save to Google Drive. Your stories are still safe on this device.");
+    showToast("Couldn't save to Google Drive. Your entries are still safe on this device.");
     console.error(e);
   }
 }
@@ -1032,7 +1032,7 @@ function shareToFacebook() {
 
 // ── PRINT BOOK ────────────────────────────────────────────
 function printBook() {
-  if (entries.length === 0) { showToast('No stories to print yet, Amal!'); return; }
+  if (entries.length === 0) { showToast('No entries to print yet, Amal!'); return; }
 
   const categories = ['childhood','family','places','traditions','recipes','poetry','fiction','anything'];
   const catNames = { childhood:'Childhood', family:'Family', places:'Places', traditions:'Traditions & Celebrations', recipes:'Recipes & Food Memories', poetry:'Poetry', fiction:'Fiction', anything:'Other Memories' };
@@ -1202,10 +1202,10 @@ async function importFromDrive() {
 
     // Warn if backup has fewer stories than local
     if (restored.length < entries.length) {
-      const ok = confirm(`Heads up! The backup from ${backedUpAt} has ${restored.length} ${restored.length === 1 ? 'story' : 'stories'}, but you currently have ${entries.length} on this device.\n\nAre you sure you want to use this older backup? We'll combine both to keep everything safe.`);
+      const ok = confirm(`Heads up! The backup from ${backedUpAt} has ${restored.length} ${restored.length === 1 ? 'entry' : 'entries'}, but you currently have ${entries.length} on this device.\n\nAre you sure you want to use this older backup? We'll combine both to keep everything safe.`);
       if (!ok) return;
     } else {
-      const ok = confirm(`We found a backup from ${backedUpAt} with ${restored.length} ${restored.length === 1 ? 'story' : 'stories'}.\n\nYou currently have ${entries.length} ${entries.length === 1 ? 'story' : 'stories'} on this device.\n\nWe'll combine everything and keep the most recent version of each story. Continue?`);
+      const ok = confirm(`We found a backup from ${backedUpAt} with ${restored.length} ${restored.length === 1 ? 'entry' : 'entries'}.\n\nYou currently have ${entries.length} ${entries.length === 1 ? 'entry' : 'entries'} on this device.\n\nWe'll combine everything and keep the most recent version of each entry. Continue?`);
       if (!ok) return;
     }
 
@@ -1233,9 +1233,9 @@ async function importFromDrive() {
     driveFileId = file.id;
     localStorage.setItem(DRIVE_FILE_KEY, driveFileId);
     renderAll();
-    showToast(`All done! You now have ${merged.length} ${merged.length === 1 ? 'story' : 'stories'}.`);
+    showToast(`All done! You now have ${merged.length} ${merged.length === 1 ? 'entry' : 'entries'}.`);
   } catch(e) {
-    showToast("Something went wrong. Your stories are still safe on this device.");
+    showToast("Something went wrong. Your entries are still safe on this device.");
     console.error(e);
   }
 }
@@ -1250,10 +1250,10 @@ function updateLastBackupText() {
     try {
       const { at, count } = JSON.parse(raw);
       const date = new Date(at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-      el.textContent = `Last saved: ${date} — ${count} ${count === 1 ? 'story' : 'stories'}`;
-    } catch(e) { el.textContent = 'Saves all your stories to your Google account'; }
+      el.textContent = `Last saved: ${date} — ${count} ${count === 1 ? 'entry' : 'entries'}`;
+    } catch(e) { el.textContent = 'Saves all your entries to your Google account'; }
   } else {
-    el.textContent = 'Saves all your stories to your Google account';
+    el.textContent = 'Saves all your entries to your Google account';
   }
 }
 
@@ -1261,7 +1261,7 @@ function updateStoryCount() {
   const el = document.getElementById('stories-count');
   if (!el) return;
   const n = entries.length;
-  el.textContent = n > 0 ? `(${n} ${n === 1 ? 'story' : 'stories'})` : '';
+  el.textContent = n > 0 ? `(${n} ${n === 1 ? 'entry' : 'entries'})` : '';
 }
 
 
@@ -1318,7 +1318,7 @@ function renderChapterCards() {
     return `<div class="chapter-card" style="background:${ch.color};" onclick="openChapter('${ch.id}')">
       <span class="chapter-card-emoji"><img src="${ch.emoji}" alt="" style="width:2rem;height:2rem;filter:brightness(0) invert(1);opacity:0.9;"></span>
       <div class="chapter-card-name">${ch.label}</div>
-      <div class="chapter-card-count">${count} ${count === 1 ? 'story' : 'stories'}</div>
+      <div class="chapter-card-count">${count} ${count === 1 ? 'entry' : 'entries'}</div>
     </div>`;
   }).join('');
 }
@@ -1405,7 +1405,7 @@ function renderAllStories() {
   const el = document.getElementById('all-stories-list');
   if (!el) return;
   if (entries.length === 0) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📖</div><div class="empty-state-text">No stories yet — start writing!</div></div>`;
+    el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📖</div><div class="empty-state-text">No entries yet — start writing!</div></div>`;
     return;
   }
   el.innerHTML = entries.map(e => storyCardHTML(e, e.category === 'recipes')).join('');
