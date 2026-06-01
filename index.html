@@ -1506,6 +1506,9 @@ function switchMainTab(id) {
   localStorage.setItem('amal_active_tab', id);
   if (id === 'prompts') renderMagazine();
   if (id === 'stories') renderAllStories();
+  closeReader();
+  closeModal();
+  window.scrollTo(0, 0);
 }
 
 // ── CHAPTER CARDS (home) ──────────────────────────────────
