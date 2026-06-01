@@ -643,26 +643,6 @@ function handleDriveClick() {
 let tokenClient = null;
 
 function initGoogleAuth() {
-  // One Tap — shows in-page prompt if user has previously signed in, no popup
-  google.accounts.id.initialize({
-    client_id: CLIENT_ID,
-    auto_select: true,
-    callback: (credentialResponse) => {
-      // One Tap gave us an ID token — use it to get an access token silently
-      requestAccessToken(true);
-    },
-  });
-
-  // Only show One Tap prompt if previously connected
-  if (driveFileId || driveFolderId) {
-    google.accounts.id.prompt((notification) => {
-      if (notification.isSkippedMoment() || notification.isDismissedMoment()) {
-        // One Tap skipped — that's fine, user can tap Connect manually
-      }
-    });
-  }
-
-  // Pre-initialize token client for fast response on button tap
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
     scope: SCOPES,
@@ -671,10 +651,14 @@ function initGoogleAuth() {
       driveToken = resp.access_token;
       updateDriveUI(true);
       syncToDrive();
-      // Auto-refresh every 45 min
       setTimeout(() => requestAccessToken(true), 45 * 60 * 1000);
     },
   });
+
+  // Silently re-auth if previously connected
+  if (driveFileId || driveFolderId) {
+    requestAccessToken(true);
+  }
 }
 
 function requestAccessToken(silent = false) {
@@ -683,18 +667,8 @@ function requestAccessToken(silent = false) {
 }
 
 function signInWithGoogle() {
-  if (!tokenClient) {
-    // GSI not loaded yet — shouldn't happen but handle gracefully
-    showToast('Google Sign-In is loading, please try again.');
-    return;
-  }
+  if (!tokenClient) { showToast('Google Sign-In is loading, please try again.'); return; }
   requestAccessToken(false);
-}
-
-function trySilentSignIn() {
-  if (!driveFileId && !driveFolderId) return;
-  if (!tokenClient) return;
-  requestAccessToken(true);
 }
 
 function updateDriveUI(connected) {
@@ -1154,9 +1128,7 @@ function handleImportClick() {
   if (driveToken) {
     importFromDrive();
   } else {
-    // Sign in first then import
     if (!tokenClient) { showToast('Google Sign-In is loading, please try again.'); return; }
-    const originalCallback = tokenClient._callback;
     tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID,
       scope: SCOPES,
